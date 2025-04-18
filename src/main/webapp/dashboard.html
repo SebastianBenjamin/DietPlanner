@@ -12,7 +12,11 @@
     
         <div class="h-24 border border-black flex items-center justify-between text-3xl font-bold px-6">
             <div>Diet Planner</div>
-            <div class="text-lg">Welcome, Username</div>
+            
+            <%
+                User user = (User) request.getAttribute("user");
+            %>
+            <div class="text-lg">Welcome, <%=user.getFullName()%></div>
         </div>
     
     
@@ -24,9 +28,12 @@
                 Your Diets
             </div>
             <div class="flex-grow overflow-y-auto"></div>
-            <button class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
-                Start a diet
-            </button>
+            <a class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+                choose a diet
+            </a>
+            <a class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+                Make a diet
+            </a>
         </div>
         
         <!-- Center Section -->
@@ -46,10 +53,20 @@
         </div>
         
         <!-- Right Section -->
-        <div class="w-1/4 border border-black bg-white flex flex-col h-full md:static absolute right-0 top-0 bottom-0">
+        <div class="w-1/4 border border-black bg-white flex flex-col jus h-full md:static absolute right-0 top-0 bottom-0">
             <div class="h-16 border-b border-black flex items-center justify-center font-medium">
-                Rigt section
+                Tracking
             </div>
+          
+            <button class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+                Log food
+            </button>
+            <button class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+                Log water
+            </button>
+            <button class="h-16 border-b border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+                Log exercise
+            </button>
         </div>
     </div>
     
@@ -67,7 +84,7 @@
                 const data = await response.json();
                 
                 if (data.salads && data.salads.length > 0) {
-                    const randomIndex = 6;
+                    const randomIndex = 1;
                     const salad = data.salads[randomIndex];
                     
                     document.getElementById('salad-name').textContent = salad.name;
