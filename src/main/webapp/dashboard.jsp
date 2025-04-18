@@ -16,8 +16,17 @@
             
             <%
                 User user = (User) request.getAttribute("user");
-            %>
+                if(user==null){
+                    %>
             <div class="text-lg">Welcome, <%=user.getFullName()%></div>
+            <%
+                }else{
+                    %>
+            <div class="text-lg">Welcome, <%=user.getFullName()%></div>
+            <%
+                }
+            %>
+
         </div>
     
     
@@ -58,7 +67,9 @@
             <div class="h-16 border-b border-black flex items-center justify-center font-medium">
                 Tracking
             </div>
-          
+          <div>
+              no logged data
+          </div>
             <button class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
                 Log food
             </button>
