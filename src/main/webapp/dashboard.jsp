@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+</head>
+<body class="flex flex-col h-screen overflow-hidden bg-white text-black">
+    <!-- Navbar -->
+        <div class="h-24 border border-black flex items-center justify-between text-3xl font-bold px-6">
+            <div>Diet Planner</div>
+            <div class="text-lg">Welcome, Username</div>
+        </div>
+
+    
+    <!-- Content Area -->
+    <div class="flex flex-1 relative overflow-hidden">
+        <!-- Left Section - Your Diets -->
+        <div class="w-1/4 border border-black bg-white flex flex-col h-full md:static absolute left-0 top-0 bottom-0">
+            <div class="h-16 border-b border-black flex items-center justify-center font-medium">
+                Your Diets
+            </div>
+            <div class="flex-grow overflow-y-auto"></div>
+            <button class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+                Start a diet
+            </button>
+        </div>
+        
+        <!-- Center Section -->
+        <div class="w-1/2 border border-black bg-white mx-auto flex flex-col">
+            <div class="h-16 border-b border-black flex items-center justify-center">
+                <form class="w-full px-4">
+                    <input type="search" placeholder="Search here" class="w-full p-2 border border-black rounded">
+                </form>
+            </div>
+            <div class="bg-white p-4 flex-1 overflow-y-auto">
+                <h1 class="text-2xl font-bold mb-4">Salad of the day</h1>
+                <h3 id="salad-name" class="text-xl mb-2"></h3>
+                <img id="salad-image" src="" alt="Salad" class="max-w-xs mx-auto my-4">
+                <p id="salad-recipe" class="mb-4"></p>
+                <p id="error-message" class="text-red-500"></p>
+            </div>
+        </div>
+        
+        <!-- Right Section -->
+        <div class="w-1/4 border border-black bg-white flex flex-col h-full md:static absolute right-0 top-0 bottom-0">
+            <div class="h-16 border-b border-black flex items-center justify-center font-medium">
+                Rigt section
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mobile Layout (Only shows when screen is small) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-black h-16 flex justify-around items-center">
+        <div class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100">Diets</div>
+        <div class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100">Home</div>
+        <div class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100">Profile</div>
+    </div>
+
+    <script>
+        async function displayRandomSalad() {
+            try {
+                const response = await fetch('https://mocki.io/v1/37f08d62-c762-47d3-893e-0f6a015a7bf4');
+                const data = await response.json();
+                
+                if (data.salads && data.salads.length > 0) {
+                    const randomIndex = 6;
+                    const salad = data.salads[randomIndex];
+                    
+                    document.getElementById('salad-name').textContent = salad.name;
+                    document.getElementById('salad-recipe').innerHTML = salad.recipe;
+                    document.getElementById('salad-image').src = salad.image;
+                    document.getElementById('salad-image').alt = salad.name;
+                    
+                    return salad;
+                } else {
+                    console.error('No salads found in the data');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error fetching salad data:', error);
+                document.getElementById('error-message').textContent = 'Failed to load recipe. Please try again later.';
+                return null;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', displayRandomSalad);
+    </script>
+</body>
+</html>
