@@ -1,4 +1,6 @@
 <%@ page import="org.classFiles.User" %>
+<%@ page errorPage="error.jsp" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,16 +15,16 @@
     
         <div class="h-24 border border-black flex items-center justify-between text-3xl font-bold px-6">
             <div>Diet Planner</div>
-            
+
             <%
-                User user = (User) request.getAttribute("user");
-                if(user==null){
-                    %>
+                User user = (User) session.getAttribute("user");
+                if(user != null){
+            %>
             <div class="text-lg">Welcome, <%=user.getFullName()%></div>
             <%
-                }else{
-                    %>
-            <div class="text-lg">Welcome, <%=user.getFullName()%></div>
+            } else {
+            %>
+            <div class="text-lg">Please log in</div>
             <%
                 }
             %>
@@ -37,22 +39,22 @@
             <div class="h-16 border-b border-black flex items-center justify-center font-medium">
                 Your Diets
             </div>
-            <div class="flex-grow overflow-y-auto"></div>
-            <a class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
-                choose a diet
+            <div class="flex-grow overflow-y-auto max-h-screen max-h-screen flex items-center justify-center">
+                You don't have any diets yet !
+            </div>
+            <a class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none"
+               href="dietmanager?c=0">
+                Choose a diet
             </a>
-            <a class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
-                Make a diet
+            <a class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none"
+               href="dietmanager?c=1">
+                Make a Diet
             </a>
         </div>
         
         <!-- Center Section -->
         <div class="w-1/2 border border-black bg-white mx-auto flex flex-col">
-            <div class="h-16 border-b border-black flex items-center justify-center">
-                <form class="w-full px-4">
-                    <input type="search" placeholder="Search here" class="w-full p-2 border border-black rounded">
-                </form>
-            </div>
+
             <div class="bg-white p-4 flex-1 overflow-y-auto">
                 <h1 class="text-2xl font-bold mb-4">Salad of the day</h1>
                 <h3 id="salad-name" class="text-xl mb-2"></h3>
@@ -67,9 +69,9 @@
             <div class="h-16 border-b border-black flex items-center justify-center font-medium">
                 Tracking
             </div>
-          <div>
-              no logged data
-          </div>
+            <div class="flex-grow overflow-y-auto max-h-screen max-h-screen flex items-center justify-center">
+                No logged data yet !.
+            </div>
             <button class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
                 Log food
             </button>

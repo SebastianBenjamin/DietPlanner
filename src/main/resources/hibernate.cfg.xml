@@ -6,6 +6,7 @@
         <property name="hibernate.connection.password"></property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <mapping class="org.classFiles.User"/>
+        <mapping class="org.classFiles.Diet"/>
 
     </session-factory>
 </hibernate-configuration>
