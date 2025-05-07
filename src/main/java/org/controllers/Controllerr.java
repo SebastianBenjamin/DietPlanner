@@ -1,5 +1,7 @@
 package org.controllers;
 
+import org.classFiles.Diet;
+import org.classFiles.Services;
 import org.classFiles.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 
 @Controller
@@ -29,10 +33,28 @@ public class Controllerr {
     }
     @GetMapping("/dietmanager")
     public String dietmanager(@RequestParam(name = "c", required = false, defaultValue = "0") int cValue,
-                              Model model) {
-        if (cValue == 0) {
-            return "dietmaker";
+                              Model model,
+                              HttpSession session) {
+        try {
+            if (cValue == 0) {
+                // Show diet maker page
+                return "dietmaker";
+            } else {
+                // Verify user is logged in
+                User user = (User) session.getAttribute("user");
+                if (user == null) {
+                    return "redirect:/login";
+                }
+
+                // Get all diets and show chooser page
+                Services services = new Services();
+                List<Diet> diets = services.getAllDiets();
+                model.addAttribute("diets", diets);
+                return "dietchooser";
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to load diets: " + e.getMessage());
+            return "error";
         }
-        else return "dietchooser";
     }
 }

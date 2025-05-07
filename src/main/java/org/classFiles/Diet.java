@@ -21,8 +21,8 @@ public class Diet {
     @Column(name = "diet_preference")
     private String dietPreference;
 
-    @Column(name = "exercise")
-    private String exercise;
+    @Column(name = "exercise" )
+    private boolean exercise;
 
     @Column(name = "total_meals")
     private Integer totalMeals;
@@ -42,7 +42,7 @@ public class Diet {
     }
 
     public Diet(String dietName, String dietType, String dietPreference,
-                String exercise, Integer totalMeals, Integer waterIntake) {
+                boolean exercise, Integer totalMeals, Integer waterIntake) {
         this.dietName = dietName;
         this.dietType = dietType;
         this.dietPreference = dietPreference;
@@ -80,11 +80,11 @@ public class Diet {
         this.dietPreference = dietPreference;
     }
 
-    public String getExercise() {
+    public boolean getExercise() {
         return exercise;
     }
 
-    public void setExercise(String exercise) {
+    public void setExercise(boolean exercise) {
         this.exercise = exercise;
     }
 

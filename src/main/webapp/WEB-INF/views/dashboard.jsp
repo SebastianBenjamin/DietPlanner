@@ -43,11 +43,11 @@
                 You don't have any diets yet !
             </div>
             <a class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none"
-               href="dietmanager?c=0">
+               href="dietmanager?c=1">
                 Choose a diet
             </a>
             <a class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none"
-               href="dietmanager?c=1">
+               href="dietmanager?c=0">
                 Make a Diet
             </a>
         </div>
@@ -98,7 +98,7 @@
                 const data = await response.json();
                 
                 if (data.salads && data.salads.length > 0) {
-                    const randomIndex = 1;
+                    const randomIndex = 2;
                     const salad = data.salads[randomIndex];
                     
                     document.getElementById('salad-name').textContent = salad.name;
