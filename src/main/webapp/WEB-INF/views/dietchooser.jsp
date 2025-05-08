@@ -25,7 +25,7 @@
 
 <!-- Content Area -->
 <div class="flex-1 overflow-y-auto p-6">
-    <h1 class="text-3xl font-bold mb-6">Choose Your Diet Plan</h1>
+    <h3 class="text-xl font-bold mb-6">Choose Your Diet Plan</h3>
 
     <c:if test="${not empty error}">
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
@@ -61,7 +61,7 @@
                 <form action="selectDiet" method="post">
                     <input type="hidden" name="userId" value="${sessionScope.user.userId}">
                     <input type="hidden" name="dietId" value="${diet.dietId}">
-                    <button type="submit" class="w-full border-2 text-black py-2 rounded hover:bg-gray-200 hover:text-black">
+                    <button type="submit" class="w-full border text-black py-2 border-black rounded hover:bg-gray-200 hover:text-black">
                         Select
                     </button>
                 </form>
@@ -77,7 +77,7 @@
                 <li>• Choose meal frequency</li>
                 <li>• Custom preferences</li>
             </ul>
-            <a href="dietmanager?c=0" class="block w-full border-2 text-black py-2 rounded hover:bg-green-100 text-center">
+            <a href="dietmanager?c=0" class="block w-full border border-black text-black py-2 rounded hover:bg-green-100 text-center">
                 Create Custom Diet
             </a>
         </div>

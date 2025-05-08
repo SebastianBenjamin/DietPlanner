@@ -41,20 +41,25 @@
             <div class="h-16 border-b border-black flex items-center justify-center font-medium">
                 Your Diets
             </div>
-            <div class="flex-grow overflow-y-auto max-h-screen max-h-screen flex items-center justify-center">
+            <div class="flex-grow overflow-y-auto max-h-screen max-h-screen flex flex-col items-center justify-center">
                 <%
                     Diet diet = user.getDiet();
                     if(diet != null){
                 %>
-                <div class="text-center">
+                <div class="text-center mb-4">
                     <p class="text-lg font-bold"> <%= diet.getDietName() %></p>
                     <p class="text-lg font-normal"><%= diet.getDietType() %></p>
                 </div>
+                <form method="post" action="cancelDiet" class="mb-4">
+                    <input type="hidden" name="userId" value="<%= user.getUserId() %>">
+                    <input type="submit" class="inline-block px-3 py-1.5 text-red-600 border border-red-600 rounded-md transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-offset-1"
+                           value="Cancel Diet"/>
+                </form>
                 <%
                 } else {
                 %>
                 <div class="text-center">
-                    <p class="text-lg font-semibold">No diet selected.</p>
+                    No diet selected!.
                 </div>
                 <%
                     }

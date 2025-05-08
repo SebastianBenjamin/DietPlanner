@@ -1,5 +1,6 @@
 package org.controllers;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.classFiles.Diet;
 import org.classFiles.Services;
 import org.classFiles.User;
@@ -24,7 +25,6 @@ public class Controllerr {
     Configuration cfg = new Configuration().configure();
     SessionFactory sf = cfg.buildSessionFactory();
     Session s = sf.openSession();
-    Transaction tx = s.beginTransaction();
     @RequestMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
         User user = s.get(User.class, 1);
@@ -67,11 +67,54 @@ public class Controllerr {
         }else{
            Diet diet=s.get(Diet.class, dietId);
            user.setDiet(diet);
-
+            Transaction tx = s.beginTransaction();
             s.update(user);
             tx.commit();
             session.setAttribute("user", user);
 
+            return "dashboard";
+        }
+    }
+    @PostMapping("/cancelDiet")
+    public String cancelDiet(@RequestParam(name =
+    "userId",required = true,defaultValue = "null")int userId, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }else{
+            Transaction tx = s.beginTransaction();
+           user.setDiet(null);
+            s.update(user);
+            tx.commit();
+            session.setAttribute("user", user);
+
+            return "dashboard";
+        }
+    }
+    @PostMapping("makeDiet")
+    public String makeDiet(HttpServletRequest request, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }else{
+            Transaction tx = s.beginTransaction();
+            Diet diet =new Diet();
+            diet.setDietName(request.getParameter("dietName"));
+            diet.setDietType(request.getParameter("dietType"));
+            diet.setDietPreference(request.getParameter("dietPreference"));
+            if(request.getParameter("exercise").equals("1")){
+            diet.setExercise(true);
+            }else diet.setExercise(false);
+            diet.setWaterIntake(Integer.parseInt(request.getParameter("waterIntake")));
+            diet.setTotalMeals(Integer.parseInt(request.getParameter("totalMeals")));
+            s.save(diet);
+
+            // Now set it to the user
+            user.setDiet(diet);
+            s.update(user);
+
+            tx.commit();
+            session.setAttribute("user", user);
             return "dashboard";
         }
     }

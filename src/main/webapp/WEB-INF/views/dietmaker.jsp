@@ -30,9 +30,9 @@
 
 <!-- Content Area -->
 <div class="flex-1 overflow-y-auto p-6">
-    <h1 class="text-3xl font-bold mb-6">Create Custom Diet Plan</h1>
+    <h3 class="text-xl font-bold mb-6">Create Custom Diet Plan</h3>
 
-    <form action="/dietmanager" method="post" class="max-w-3xl mx-auto">
+    <form action="/makeDiet" method="post" class="max-w-3xl mx-auto">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Diet Basic Info -->
             <div class="space-y-4">
@@ -44,7 +44,7 @@
 
                 <div>
                     <label for="dietType" class="block text-sm font-medium text-gray-700">Diet Type</label>
-                    <select id="dietType" name="dietType"
+                    <select id="dietType" name="dietType" required
                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         <option value="balanced">Balanced</option>
                         <option value="lowCarb">Low Carb</option>
@@ -57,7 +57,7 @@
 
                 <div>
                     <label for="dietPreference" class="block text-sm font-medium text-gray-700">Dietary Preference</label>
-                    <select id="dietPreference" name="dietPreference"
+                    <select id="dietPreference" name="dietPreference" required
                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                         <option value="none" disabled selected>None</option>
                         <option value="veg">Vegetarian</option>
@@ -70,19 +70,19 @@
             <div class="space-y-4">
                 <div>
                     <label for="totalMeals" class="block text-sm font-medium text-gray-700">Total Meals Per Day</label>
-                    <input type="number" id="totalMeals" name="totalMeals" min="1" max="6" value="3"
+                    <input type="number" id="totalMeals" name="totalMeals" min="1" max="6" value="0" required
                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
                 <div>
-                    <label for="waterIntake" class="block text-sm font-medium text-gray-700">Daily Water Intake (glasses)</label>
-                    <input type="number" id="waterIntake" name="waterIntake" min="1" max="20" value="8"
+                    <label for="waterIntake" class="block text-sm font-medium text-gray-700">Daily Water Intake (liters)</label>
+                    <input type="number" id="waterIntake" name="waterIntake" min="1" max="20" value="0" required
                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
                 <div>
-                    <label for="exercise" class="block text-sm font-medium text-gray-700">Exercise Recommendation</label>
-                    <select id="exercise" name="exercise"
+                    <label for="exercise" class="block text-sm font-medium text-gray-700">Exercise </label>
+                    <select id="exercise" name="exercise" required
                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
 
                         <option value="1">Yes</option>
@@ -93,19 +93,13 @@
             </div>
         </div>
 
-        <!-- Additional Notes -->
-        <div class="mt-6">
-            <label for="notes" class="block text-sm font-medium text-gray-700">Additional Notes/Instructions</label>
-            <textarea id="notes" name="notes" rows="3"
-                      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
-        </div>
 
         <!-- Submit Button -->
         <div class="mt-8 flex justify-end space-x-4">
-            <a href="/dashboard" class="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400">
+            <a href="dashboard" class="border border-black bg-transparent text-black py-2 px-4 rounded hover:bg-black hover:text-white transition-colors duration-200">
                 Cancel
             </a>
-            <button type="submit" class="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600">
+            <button type="submit" class="border border-black bg-transparent text-black py-2 px-6 rounded hover:bg-black hover:text-white transition-colors duration-200">
                 Create Diet Plan
             </button>
         </div>
