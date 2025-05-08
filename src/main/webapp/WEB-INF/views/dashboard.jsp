@@ -1,4 +1,5 @@
 <%@ page import="org.classFiles.User" %>
+<%@ page import="org.classFiles.Diet" %>
 <%@ page errorPage="error.jsp" %>
 
 <!DOCTYPE html>
@@ -23,6 +24,7 @@
             <div class="text-lg">Welcome, <%=user.getFullName()%></div>
             <%
             } else {
+                response.sendRedirect("login");
             %>
             <div class="text-lg">Please log in</div>
             <%
@@ -40,8 +42,25 @@
                 Your Diets
             </div>
             <div class="flex-grow overflow-y-auto max-h-screen max-h-screen flex items-center justify-center">
-                You don't have any diets yet !
+                <%
+                    Diet diet = user.getDiet();
+                    if(diet != null){
+                %>
+                <div class="text-center">
+                    <p class="text-lg font-bold"> <%= diet.getDietName() %></p>
+                    <p class="text-lg font-normal"><%= diet.getDietType() %></p>
+                </div>
+                <%
+                } else {
+                %>
+                <div class="text-center">
+                    <p class="text-lg font-semibold">No diet selected.</p>
+                </div>
+                <%
+                    }
+                %>
             </div>
+
             <a class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none"
                href="dietmanager?c=1">
                 Choose a diet
@@ -58,7 +77,8 @@
             <div class="bg-white p-4 flex-1 overflow-y-auto">
                 <h1 class="text-2xl font-bold mb-4">Salad of the day</h1>
                 <h3 id="salad-name" class="text-xl mb-2"></h3>
-                <img id="salad-image" src="" alt="Salad" class="max-w-xs mx-auto my-4">
+                <img id="salad-image" src="" alt="Salad" class="w-48 h-48 mx-auto my-4 object-cover rounded-lg"/>
+
                 <p id="salad-recipe" class="mb-4"></p>
                 <p id="error-message" class="text-red-500"></p>
             </div>

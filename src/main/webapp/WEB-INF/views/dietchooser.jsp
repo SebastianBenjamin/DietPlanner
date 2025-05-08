@@ -15,6 +15,7 @@
     <c:choose>
         <c:when test="${not empty sessionScope.user}">
             <div class="text-lg">Welcome, ${sessionScope.user.fullName}</div>
+
         </c:when>
         <c:otherwise>
             <div class="text-lg">Please log in</div>
@@ -37,7 +38,6 @@
         <c:forEach items="${diets}" var="diet">
             <div class="border border-gray-300 rounded-lg p-4 hover:shadow-lg transition-shadow">
                 <h2 class="text-xl font-bold mb-2">${diet.dietName}</h2>
-                <h3 class="text-xl font-bold mb-2">${diet.dietId}</h3>
                 <p class="text-gray-600 mb-4">${diet.dietType}</p>
                 <ul class="mb-4 space-y-1">
                     <c:if test="${not empty diet.dietPreference}">
@@ -58,10 +58,11 @@
                         <li>• Water intake: ${diet.waterIntake} liters</li>
                     </c:if>
                 </ul>
-                <form action="/selectDiet" method="post">
+                <form action="selectDiet" method="post">
+                    <input type="hidden" name="userId" value="${sessionScope.user.userId}">
                     <input type="hidden" name="dietId" value="${diet.dietId}">
-                    <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-                        Select ${diet.dietName}
+                    <button type="submit" class="w-full border-2 text-black py-2 rounded hover:bg-gray-200 hover:text-black">
+                        Select
                     </button>
                 </form>
             </div>
@@ -76,7 +77,7 @@
                 <li>• Choose meal frequency</li>
                 <li>• Custom preferences</li>
             </ul>
-            <a href="/dietmanager?c=1" class="block w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 text-center">
+            <a href="dietmanager?c=0" class="block w-full border-2 text-black py-2 rounded hover:bg-green-100 text-center">
                 Create Custom Diet
             </a>
         </div>
@@ -85,9 +86,9 @@
 
 <!-- Mobile Navigation -->
 <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-black h-16 flex justify-around items-center">
-    <a href="/dashboard" class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100">Home</a>
+    <a href="dashboard" class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100">Home</a>
     <div class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100 font-bold">Diets</div>
-    <a href="/profile" class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100">Profile</a>
+    <a href="profile" class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100">Profile</a>
 </div>
 </body>
 </html>

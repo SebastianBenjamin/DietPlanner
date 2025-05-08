@@ -180,4 +180,5 @@ public class User {
     public void setDiet(Diet diet) {
         this.diet = diet;
     }
+
 }

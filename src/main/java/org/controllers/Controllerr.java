@@ -9,6 +9,7 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 
@@ -20,12 +21,12 @@ import java.util.List;
 
 @Controller
 public class Controllerr {
+    Configuration cfg = new Configuration().configure();
+    SessionFactory sf = cfg.buildSessionFactory();
+    Session s = sf.openSession();
+    Transaction tx = s.beginTransaction();
     @RequestMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
-        Configuration cfg = new Configuration().configure();
-        SessionFactory sf = cfg.buildSessionFactory();
-        Session s = sf.openSession();
-        Transaction tx = s.beginTransaction();
         User user = s.get(User.class, 1);
         model.addAttribute("user", user);
         session.setAttribute("user", user);
@@ -55,6 +56,23 @@ public class Controllerr {
         } catch (Exception e) {
             model.addAttribute("error", "Failed to load diets: " + e.getMessage());
             return "error";
+        }
+    }
+    @PostMapping("/selectDiet")
+    public String selectDiet(@RequestParam(name ="dietId",required=true,defaultValue = "null")int dietId,@RequestParam(name =
+    "userId",required = true,defaultValue = "null")int userId, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }else{
+           Diet diet=s.get(Diet.class, dietId);
+           user.setDiet(diet);
+
+            s.update(user);
+            tx.commit();
+            session.setAttribute("user", user);
+
+            return "dashboard";
         }
     }
 }
