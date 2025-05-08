@@ -106,9 +106,9 @@
         <button class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
             Log food
         </button>
-        <button class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
-            Log water
-        </button>
+        <a href="waterLog" class="h-16 border-b border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+            <i class="fas fa-tint mr-2"></i>Water Log
+        </a>
         <button class="h-16 border-b border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
             Log exercise
         </button>
