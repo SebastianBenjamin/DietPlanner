@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.classFiles.Diet;
 import org.classFiles.Services;
 import org.classFiles.User;
+import org.classFiles.WaterLog; // Add this import
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -131,6 +133,72 @@ public class Controllerr {
 
             return "dashboard";
         }
+    }
+
+//    water
+@GetMapping("/waterLog")
+public String waterLogPage(Model model, HttpSession session) {
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        return "redirect:/login";
+    }
+
+    Services services = new Services();
+    LocalDateTime today = LocalDateTime.now();
+    int todayWaterIntake = services.getTotalWaterIntake(user, today);
+
+    // Get water intake goal from user's diet or use default
+    int dailyGoal = 2000; // Default 2L goal
+    if (user.getDiet() != null && user.getDiet().getWaterIntake() > 0) {
+        dailyGoal = user.getDiet().getWaterIntake() *1000;
+    }
+
+    model.addAttribute("todayWaterIntake", todayWaterIntake);
+    model.addAttribute("dailyGoal", dailyGoal);
+
+    LocalDateTime startOfDay = today.toLocalDate().atStartOfDay();
+    LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
+    List<WaterLog> todayLogs = services.getUserWaterLogs(user, startOfDay, endOfDay);
+    model.addAttribute("waterLogs", todayLogs);
+
+    return "waterLog";
+}
+
+    @PostMapping("/addWaterLog")
+    public String addWaterLog(@RequestParam("amountMl") int amountMl,
+                              HttpSession session,
+                              Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Services services = new Services();
+        services.logWaterIntake(user, amountMl);
+
+        model.addAttribute("alert", "Water intake logged successfully!");
+        return "redirect:/waterLog";
+    }
+
+    @PostMapping("/deleteWaterLog")
+    public String deleteWaterLog(@RequestParam("logId") long logId,
+                                 HttpSession session,
+                                 Model model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Services services = new Services();
+        boolean deleted = services.deleteWaterLog(logId, user);
+
+        if (deleted) {
+            model.addAttribute("alert", "Water log deleted successfully!");
+        } else {
+            model.addAttribute("alert", "Could not delete log. Please try again.");
+        }
+
+        return "redirect:/waterLog";
     }
 
 }

@@ -8,6 +8,7 @@
         <mapping class="org.classFiles.User"/>
         <mapping class="org.classFiles.Diet"/>
         <mapping class="org.classFiles.LogData"/>
+        <mapping class="org.classFiles.WaterLog"/>
 
     </session-factory>
 </hibernate-configuration>
