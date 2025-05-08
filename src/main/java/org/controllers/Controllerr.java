@@ -37,6 +37,11 @@ public class Controllerr {
         session.setAttribute("user", user);
         return "dashboard";
     }
+    @RequestMapping("/profile")
+    public String profile(Model model, HttpSession session) {
+        return "profile";
+
+    }
     @GetMapping("/dietmanager")
     public String dietmanager(@RequestParam(name = "c", required = false, defaultValue = "0") int cValue,
                               Model model,
@@ -127,4 +132,5 @@ public class Controllerr {
             return "dashboard";
         }
     }
+
 }

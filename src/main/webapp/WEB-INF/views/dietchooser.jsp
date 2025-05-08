@@ -1,3 +1,4 @@
+<%@ page import="org.classFiles.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
@@ -7,20 +8,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diet Planner - Choose a Diet</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="flex flex-col h-screen overflow-hidden bg-white text-black">
 <!-- Navbar -->
 <div class="h-24 border border-black flex items-center justify-between text-3xl font-bold px-6">
     <div>Diet Planner</div>
-    <c:choose>
-        <c:when test="${not empty sessionScope.user}">
-            <div class="text-lg">Welcome, ${sessionScope.user.fullName}</div>
+    <%
+        User user = (User) session.getAttribute("user");
+        if(user != null){
+    %>
+    <div class="text-lg">
+        <a href="profile" class="flex items-center gap-2 hover:text-gray-600" title="Profile">
+            <i class="fas fa-user-circle text-3xl"></i>
+            <span><%=user.getFullName()%></span>
+        </a>
+    </div>
+    <%
+    } else {
+        response.sendRedirect("login");
+    %>
+    <div class="text-lg">Please log in</div>
+    <%
+        }
+    %>
 
-        </c:when>
-        <c:otherwise>
-            <div class="text-lg">Please log in</div>
-        </c:otherwise>
-    </c:choose>
 </div>
 
 <!-- Content Area -->
