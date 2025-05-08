@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diet Planner - Choose Diet</title>
+    <title>Diet Planner - Choose a Diet</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex flex-col h-screen overflow-hidden bg-white text-black">
@@ -61,7 +61,7 @@
                 <form action="selectDiet" method="post">
                     <input type="hidden" name="userId" value="${sessionScope.user.userId}">
                     <input type="hidden" name="dietId" value="${diet.dietId}">
-                    <button type="submit" class="w-full border text-black py-2 border-black rounded hover:bg-gray-200 hover:text-black">
+                    <button type="submit" class="w-full border border-black bg-transparent text-black py-2 px-6 rounded hover:bg-black hover:text-white transition-colors duration-200">
                         Select
                     </button>
                 </form>
@@ -77,7 +77,7 @@
                 <li>• Choose meal frequency</li>
                 <li>• Custom preferences</li>
             </ul>
-            <a href="dietmanager?c=0" class="block w-full border border-black text-black py-2 rounded hover:bg-green-100 text-center">
+            <a href="dietmanager?c=0" class="block w-full border border-black text-black py-2 rounded hover:bg-green-300 text-center">
                 Create Custom Diet
             </a>
         </div>

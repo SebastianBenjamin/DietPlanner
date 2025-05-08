@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diet Planner</title>
+    <title>Diet Planner - Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
@@ -127,7 +127,7 @@
                     const salad = data.salads[randomIndex];
                     
                     document.getElementById('salad-name').textContent = salad.name;
-                    document.getElementById('salad-recipe').innerHTML = salad.recipe;
+                    document.getElementById('salad-recipe').innerHTML = "Ingredients: <br>"+salad.recipe;
                     document.getElementById('salad-image').src = salad.image;
                     document.getElementById('salad-image').alt = salad.name;
                     
@@ -144,6 +144,13 @@
         }
 
         window.addEventListener('DOMContentLoaded', displayRandomSalad);
+        window.onload = function() {
+            const alertMessage = '${alert}';
+            if (alertMessage) {
+                alert(alertMessage);
+            }
+        };
     </script>
+
 </body>
 </html>

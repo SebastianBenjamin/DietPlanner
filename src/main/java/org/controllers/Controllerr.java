@@ -25,6 +25,11 @@ public class Controllerr {
     Configuration cfg = new Configuration().configure();
     SessionFactory sf = cfg.buildSessionFactory();
     Session s = sf.openSession();
+
+    @RequestMapping("/")
+    public String homepage() {
+        return "index";
+    }
     @RequestMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
         User user = s.get(User.class, 1);
@@ -38,16 +43,16 @@ public class Controllerr {
                               HttpSession session) {
         try {
             if (cValue == 0) {
-                // Show diet maker page
+
                 return "dietmaker";
             } else {
-                // Verify user is logged in
+
                 User user = (User) session.getAttribute("user");
                 if (user == null) {
                     return "redirect:/login";
                 }
 
-                // Get all diets and show chooser page
+
                 Services services = new Services();
                 List<Diet> diets = services.getAllDiets();
                 model.addAttribute("diets", diets);
@@ -66,12 +71,12 @@ public class Controllerr {
             return "redirect:/login";
         }else{
            Diet diet=s.get(Diet.class, dietId);
+            model.addAttribute("alert","Diet selection successful ! ");
            user.setDiet(diet);
             Transaction tx = s.beginTransaction();
             s.update(user);
             tx.commit();
             session.setAttribute("user", user);
-
             return "dashboard";
         }
     }
@@ -87,6 +92,7 @@ public class Controllerr {
             s.update(user);
             tx.commit();
             session.setAttribute("user", user);
+            model.addAttribute("alert","Diet cancellation successful ! ");
 
             return "dashboard";
         }
@@ -107,14 +113,17 @@ public class Controllerr {
             }else diet.setExercise(false);
             diet.setWaterIntake(Integer.parseInt(request.getParameter("waterIntake")));
             diet.setTotalMeals(Integer.parseInt(request.getParameter("totalMeals")));
+            model.addAttribute("alert","Diet creation successful ! ");
+
             s.save(diet);
 
-            // Now set it to the user
+
             user.setDiet(diet);
             s.update(user);
 
             tx.commit();
             session.setAttribute("user", user);
+
             return "dashboard";
         }
     }
