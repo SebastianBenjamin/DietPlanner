@@ -21,12 +21,14 @@
         User user = (User) session.getAttribute("user");
         if(user != null){
     %>
-    <div class="text-lg">
+    <div class="flex gap-4">
+
         <a href="profile" class="flex items-center gap-2 hover:text-gray-600" title="Profile">
-            <i class="fas fa-user-circle text-3xl"></i>
-            <span><%=user.getFullName()%></span>
+            <i class="fas fa-user-circle text-lg"></i> <!-- Smaller Icon -->
+            <span class="text-lg"><%=user.getFullName()%></span> <!-- Smaller Text -->
         </a>
     </div>
+
     <%
     } else {
         response.sendRedirect("login");
@@ -151,9 +153,10 @@
 
     window.addEventListener('DOMContentLoaded', displayRandomSalad);
     window.onload = function() {
-        const alertMessage = '${alert}';
+        const alertMessage = '${sessionScope.alert}';
         if (alertMessage) {
             alert(alertMessage);
+            <% session.removeAttribute("alert"); %>
         }
     };
 </script>

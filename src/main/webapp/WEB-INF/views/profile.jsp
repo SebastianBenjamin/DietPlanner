@@ -67,10 +67,14 @@
 <!-- Navbar -->
 <div class="h-24 border border-black flex items-center justify-between text-3xl font-bold px-6">
     <div>Diet Planner</div>
-    <div class="text-lg">
+    <div class="flex gap-4">
+        <a href="dashboard" class="flex items-center gap-2 hover:text-gray-600">
+            <i class="fas fa-home text-lg mr-1"></i> <!-- Smaller Icon -->
+            <span class="text-lg">Dashboard</span>
+        </a>
         <a href="profile" class="flex items-center gap-2 hover:text-gray-600" title="Profile">
-            <i class="fas fa-user-circle text-3xl"></i>
-            <span><%=user.getFullName()%></span>
+            <i class="fas fa-user-circle text-lg"></i> <!-- Smaller Icon -->
+            <span class="text-lg"><%=user.getFullName()%></span> <!-- Smaller Text -->
         </a>
     </div>
 </div>
@@ -145,7 +149,7 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                            <input type="email" value="<%=user.getEmail()%>" readonly
+                            <input type="email" value="<%=user.getEmail()%>" readonly name="email"
                                    class="w-full border border-gray-300 rounded-md py-2 px-3 bg-gray-100 focus:outline-none">
                         </div>
 
@@ -161,7 +165,7 @@
                                 <option value="">Select</option>
                                 <option value="male" <%=user.getGender() != null && user.getGender().equalsIgnoreCase("male") ? "selected" : ""%>>Male</option>
                                 <option value="female" <%=user.getGender() != null && user.getGender().equalsIgnoreCase("female") ? "selected" : ""%>>Female</option>
-                                <option value="other" <%=user.getGender() != null && user.getGender().equalsIgnoreCase("other") ? "selected" : ""%>>Other</option>
+
                             </select>
                         </div>
 
@@ -187,7 +191,6 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Dietary Preference</label>
                             <select name="dietaryPreference" class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black">
-                                <option value="none" <%=user.getDietaryPreference() == null ? "selected" : ""%>>Not specified</option>
                                 <option value="Vegetarian" <%=user.getDietaryPreference() != null && user.getDietaryPreference().equalsIgnoreCase("vegetarian") ? "selected" : ""%>>Vegetarian</option>
                                 <option value="Nonvegetarian" <%=user.getDietaryPreference() != null && user.getDietaryPreference().equalsIgnoreCase("nonvegetarian") ? "selected" : ""%>>Non-Vegetarian</option>
                             </select>
@@ -308,5 +311,14 @@
         <span class="text-xs">Profile</span>
     </a>
 </div>
+<script>
+    window.onload = function() {
+        const alertMessage = '${sessionScope.alert}';
+        if (alertMessage) {
+            alert(alertMessage);
+            <% session.removeAttribute("alert"); %>
+        }
+    };
+</script>
 </body>
 </html>
