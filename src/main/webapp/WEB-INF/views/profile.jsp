@@ -79,6 +79,7 @@
             // Convert exercise to boolean if it's coming as a string
             const exerciseBool = exercise === 'true' || exercise === true;
 
+
             document.getElementById('editDietId').value = dietId;
             document.getElementById('editDietName').value = dietName;
             document.getElementById('editDietType').value = dietType;
