@@ -127,29 +127,43 @@
 
 <script>
     async function displayRandomSalad() {
-        try {
-            const response = await fetch('https://mocki.io/v1/37f08d62-c762-47d3-893e-0f6a015a7bf4');
-            const data = await response.json();
+        const today = new Date().toDateString();
+        if (localStorage.getItem("updateDate") !== today) {
+            try {
+                let randomIndex = localStorage.getItem("updateNumber");
+                if (randomIndex === null || randomIndex >= 10) {  // Changed == to === and added >=
+                    randomIndex = 0;  // Changed to 0 since array indices start at 0
+                } else {
+                    randomIndex = parseInt(randomIndex) + 1;  // Ensure it's a number
+                }
+                localStorage.setItem("updateNumber", randomIndex);
 
-            if (data.salads && data.salads.length > 0) {
-                const randomIndex = 2;
-                const salad = data.salads[randomIndex];
+                const response = await fetch('https://mocki.io/v1/37f08d62-c762-47d3-893e-0f6a015a7bf4');
+                const data = await response.json();
 
-                document.getElementById('salad-name').textContent = salad.name;
-                document.getElementById('salad-recipe').innerHTML = "Ingredients: <br>"+salad.recipe;
-                document.getElementById('salad-image').src = salad.image;
-                document.getElementById('salad-image').alt = salad.name;
+                if (data.salads && data.salads.length > 0) {
+                    // Ensure index is within bounds
+                    const safeIndex = randomIndex % data.salads.length;
+                    const salad = data.salads[safeIndex];
 
-                return salad;
-            } else {
-                console.error('No salads found in the data');
+                    document.getElementById('salad-name').textContent = salad.name;
+                    document.getElementById('salad-recipe').innerHTML = "Ingredients: <br>" + salad.recipe;
+                    document.getElementById('salad-image').src = salad.image;
+                    document.getElementById('salad-image').alt = salad.name;
+
+                    localStorage.setItem("updateDate", today);
+                    return salad;
+                } else {
+                    console.error('No salads found in the data');
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error fetching salad data:', error);
+                document.getElementById('error-message').textContent = 'Failed to load recipe. Please try again later.';
                 return null;
             }
-        } catch (error) {
-            console.error('Error fetching salad data:', error);
-            document.getElementById('error-message').textContent = 'Failed to load recipe. Please try again later.';
-            return null;
         }
+        return null; // Return null if not today (to handle all code paths)
     }
 
     window.addEventListener('DOMContentLoaded', displayRandomSalad);

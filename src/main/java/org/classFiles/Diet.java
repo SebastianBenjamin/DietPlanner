@@ -35,7 +35,7 @@ public class Diet {
     private String createdBy;
 
 
-    @OneToMany(mappedBy = "diet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "diet")
     private Set<User> users = new HashSet<>();
 
     public String getCreatedBy() {
