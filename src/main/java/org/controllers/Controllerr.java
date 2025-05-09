@@ -293,8 +293,8 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
         LocalDateTime today = LocalDateTime.now();
         int todayWaterIntake = services.getTotalWaterIntake(user, today);
 
-        // Get water intake goal from user's diet or use default
-        int dailyGoal = 2000; // Default 2L goal
+
+        int dailyGoal = 2000;
         if (user.getDiet() != null && user.getDiet().getWaterIntake() > 0) {
             dailyGoal = user.getDiet().getWaterIntake() * 1000;
         }

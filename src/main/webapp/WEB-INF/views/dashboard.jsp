@@ -11,6 +11,7 @@
     <link rel="icon" type="image/ico" href="healthy-food.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 </head>
 <body class="flex flex-col h-screen overflow-hidden bg-white text-black">
 <!-- Navbar -->
@@ -124,49 +125,50 @@
     <div class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100">Home</div>
     <div class="text-center px-4 py-2 cursor-pointer hover:bg-gray-100">Profile</div>
 </div>
-
 <script>
-    async function displayRandomSalad() {
-        const today = new Date().toDateString();
-        if (localStorage.getItem("updateDate") !== today) {
-            try {
-                let randomIndex = localStorage.getItem("updateNumber");
-                if (randomIndex === null || randomIndex >= 10) {  // Changed == to === and added >=
-                    randomIndex = 0;  // Changed to 0 since array indices start at 0
-                } else {
-                    randomIndex = parseInt(randomIndex) + 1;  // Ensure it's a number
-                }
-                localStorage.setItem("updateNumber", randomIndex);
+    function getDailyIndex() {
+        // Get today's date as a unique seed (days since epoch)
+        const today = new Date();
+        const daysSinceEpoch = Math.floor(today / (1000 * 60 * 60 * 24));
 
-                const response = await fetch('https://mocki.io/v1/37f08d62-c762-47d3-893e-0f6a015a7bf4');
-                const data = await response.json();
-
-                if (data.salads && data.salads.length > 0) {
-                    // Ensure index is within bounds
-                    const safeIndex = randomIndex % data.salads.length;
-                    const salad = data.salads[safeIndex];
-
-                    document.getElementById('salad-name').textContent = salad.name;
-                    document.getElementById('salad-recipe').innerHTML = "Ingredients: <br>" + salad.recipe;
-                    document.getElementById('salad-image').src = salad.image;
-                    document.getElementById('salad-image').alt = salad.name;
-
-                    localStorage.setItem("updateDate", today);
-                    return salad;
-                } else {
-                    console.error('No salads found in the data');
-                    return null;
-                }
-            } catch (error) {
-                console.error('Error fetching salad data:', error);
-                document.getElementById('error-message').textContent = 'Failed to load recipe. Please try again later.';
-                return null;
-            }
-        }
-        return null; // Return null if not today (to handle all code paths)
+        // Cycle through 0-9 based on days
+        return daysSinceEpoch % 10;
     }
 
-    window.addEventListener('DOMContentLoaded', displayRandomSalad);
+    async function displayDailySalad() {
+        try {
+            const response = await fetch('https://mocki.io/v1/37f08d62-c762-47d3-893e-0f6a015a7bf4');
+            const data = await response.json();
+
+            if (data.salads && data.salads.length > 0) {
+                // Get today's index (0-9)
+                const dailyIndex = getDailyIndex();
+                const salad = data.salads[dailyIndex];
+
+                document.getElementById('salad-name').textContent = salad.name;
+                document.getElementById('salad-recipe').innerHTML = "Ingredients: <br>" + salad.recipe;
+                document.getElementById('salad-image').src = salad.image;
+                document.getElementById('salad-image').alt = salad.name;
+
+                // Store today's salad info
+                const today = new Date();
+                localStorage.setItem('lastSaladDate', today.toDateString());
+                localStorage.setItem('lastSaladIndex', dailyIndex);
+
+                return salad;
+            } else {
+                console.error('No salads found in the data');
+                return null;
+            }
+        } catch (error) {
+            console.error('Error fetching salad data:', error);
+            document.getElementById('error-message').textContent = 'Failed to load recipe. Please try again later.';
+            return null;
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', displayDailySalad);
+
     window.onload = function() {
         const alertMessage = '${sessionScope.alert}';
         if (alertMessage) {
@@ -175,6 +177,5 @@
         }
     };
 </script>
-
 </body>
 </html>
