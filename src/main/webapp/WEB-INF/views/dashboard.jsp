@@ -106,15 +106,15 @@
         <div class="flex-grow overflow-y-auto max-h-screen max-h-screen flex items-center justify-center">
             No logged data yet !.
         </div>
-        <button class="h-16 border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
-            Log food
-        </button>
-        <a href="waterLog" class="h-16 border-b border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+        <a href="mealLog" class="h-16 border-b border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+            <i class="fas fa-utensils mr-2"></i>Meal Log
+        </a>
+        <a href="waterLog" class="h-16 border-b border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
             <i class="fas fa-tint mr-2"></i>Water Log
         </a>
-        <button class="h-16 border-b border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
-            Log exercise
-        </button>
+        <a href="exerciseLog" class="h-16 flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
+            <i class="fas fa-dumbbell mr-2"></i>Exercise Log
+        </a>
     </div>
 </div>
 

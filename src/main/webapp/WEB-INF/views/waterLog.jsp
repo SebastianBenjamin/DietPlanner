@@ -1,7 +1,7 @@
 <%@ page import="org.classFiles.User" %>
-<%@ page import="org.classFiles.WaterLog" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="org.classFiles.LogData" %>
 <%@ page errorPage="error.jsp" %>
 
 <!DOCTYPE html>
@@ -9,33 +9,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Diet Planner - Water Log </title>
-  <link rel="icon" type="image/ico" href="healthy-food.png">
-
+  <title>Water Log - Diet Planner</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="flex flex-col h-screen bg-gray-100">
 <!-- Navbar -->
-<div class="h-24 border-b bg-white shadow flex items-center justify-between px-6">
-  <div class="text-3xl font-bold">Diet Planner</div>
+
+<div class="h-24 border border-black flex items-center justify-between text-3xl font-bold px-6">
+  <div>Diet Planner</div>
 
   <%
     User user = (User) session.getAttribute("user");
-    if(user == null) {
-      response.sendRedirect("login");
-    }
+    if(user != null){
   %>
   <div class="flex gap-4">
-    <a href="dashboard" class="flex items-center gap-2 hover:text-gray-600">
-      <i class="fas fa-home text-lg mr-1"></i> <!-- Smaller Icon -->
-      <span class="text-lg">Dashboard</span>
-    </a>
+
     <a href="profile" class="flex items-center gap-2 hover:text-gray-600" title="Profile">
       <i class="fas fa-user-circle text-lg"></i> <!-- Smaller Icon -->
       <span class="text-lg"><%=user.getFullName()%></span> <!-- Smaller Text -->
     </a>
   </div>
+
+  <%
+  } else {
+    response.sendRedirect("login");
+  %>
+  <div class="text-lg">Please log in</div>
+  <%
+    }
+  %>
+
 </div>
 
 <!-- Content -->
@@ -81,50 +85,6 @@
         </div>
       </div>
     </form>
-
-    <!-- Today's Logs -->
-    <div>
-      <h2 class="text-xl font-semibold mb-3">Today's logs</h2>
-      <div class="overflow-y-auto max-h-64">
-        <table class="w-full">
-          <thead class="bg-gray-50">
-          <tr>
-            <th class="px-4 py-2 text-left">Time</th>
-            <th class="px-4 py-2 text-right">Amount</th>
-            <th class="px-4 py-2 text-center">Action</th>
-          </tr>
-          </thead>
-          <tbody>
-          <%
-            List<WaterLog> waterLogs = (List<WaterLog>)request.getAttribute("waterLogs");
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-            if(waterLogs != null && !waterLogs.isEmpty()) {
-              for(WaterLog log : waterLogs) {
-          %>
-          <tr class="border-t">
-            <td class="px-4 py-2"><%= log.getTimestamp().format(formatter) %></td>
-            <td class="px-4 py-2 text-right"><%= log.getAmountMl() %> ml</td>
-            <td class="px-4 py-2 text-center">
-              <form action="deleteWaterLog" method="post" onsubmit="return confirm('Are you sure you want to delete this log?');">
-                <input type="hidden" name="logId" value="<%= log.getLogId() %>">
-                <button type="submit" class="text-red-500 hover:text-red-700">
-                  <i class="fas fa-trash"></i>
-                </button>
-              </form>
-            </td>
-          </tr>
-          <%
-            }
-          } else {
-          %>
-          <tr>
-            <td colspan="3" class="px-4 py-4 text-center text-gray-500">No logs for today</td>
-          </tr>
-          <% } %>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 </div>
 

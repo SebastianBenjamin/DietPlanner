@@ -4,7 +4,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.classFiles.Diet;
 import org.classFiles.Services;
 import org.classFiles.User;
-import org.classFiles.WaterLog;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -18,13 +17,13 @@ import org.springframework.stereotype.Controller;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.xml.crypto.Data;
-import javax.xml.stream.events.StartElement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 
 @Controller
@@ -282,35 +281,31 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
 }
 
 
-@GetMapping("/waterLog")
-public String waterLogPage(Model model, HttpSession session) {
-    User user = (User) session.getAttribute("user");
-    if (user == null) {
-        return "redirect:/login";
+    // Water tracking endpoints
+    @GetMapping("/waterLog")
+    public String waterLogPage(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Services services = new Services();
+        LocalDateTime today = LocalDateTime.now();
+        int todayWaterIntake = services.getTotalWaterIntake(user, today);
+
+        // Get water intake goal from user's diet or use default
+        int dailyGoal = 2000; // Default 2L goal
+        if (user.getDiet() != null && user.getDiet().getWaterIntake() > 0) {
+            dailyGoal = user.getDiet().getWaterIntake() * 1000;
+        }
+
+        model.addAttribute("todayWaterIntake", todayWaterIntake);
+        model.addAttribute("dailyGoal", dailyGoal);
+
+        return "waterLog";
     }
 
-    Services services = new Services();
-    LocalDateTime today = LocalDateTime.now();
-    int todayWaterIntake = services.getTotalWaterIntake(user, today);
-
-
-    int dailyGoal = 2000; // Default 2L goal
-    if (user.getDiet() != null && user.getDiet().getWaterIntake() > 0) {
-        dailyGoal = user.getDiet().getWaterIntake() *1000;
-    }
-
-    model.addAttribute("todayWaterIntake", todayWaterIntake);
-    model.addAttribute("dailyGoal", dailyGoal);
-
-    LocalDateTime startOfDay = today.toLocalDate().atStartOfDay();
-    LocalDateTime endOfDay = startOfDay.plusDays(1).minusNanos(1);
-    List<WaterLog> todayLogs = services.getUserWaterLogs(user, startOfDay, endOfDay);
-    model.addAttribute("waterLogs", todayLogs);
-
-    return "waterLog";
-}
-
-@PostMapping("/addWaterLog")
+    @PostMapping("/addWaterLog")
     public String addWaterLog(@RequestParam("amountMl") int amountMl,
                               HttpSession session,
                               Model model) {
@@ -322,29 +317,83 @@ public String waterLogPage(Model model, HttpSession session) {
         Services services = new Services();
         services.logWaterIntake(user, amountMl);
 
-    session.setAttribute("alert", "Water intake logged successfully!");
+        model.addAttribute("alert", "Water intake logged successfully!");
         return "redirect:/waterLog";
     }
 
-@PostMapping("/deleteWaterLog")
-    public String deleteWaterLog(@RequestParam("logId") long logId,
-                                 HttpSession session,
-                                 Model model) {
+
+    @GetMapping("/exerciseLog")
+    public String exerciseLogPage(Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
         }
 
         Services services = new Services();
-        boolean deleted = services.deleteWaterLog(logId, user);
+        LocalDateTime today = LocalDateTime.now();
+        boolean exerciseCompleted = services.getExerciseStatus(user, today);
 
-        if (deleted) {
-            session.setAttribute("alert", "Water log deleted successfully!");
-        } else {
-            session.setAttribute("alert", "Could not delete log. Please try again.");
+        model.addAttribute("exerciseCompleted", exerciseCompleted);
+
+        return "exerciseLog";
+    }
+
+    @PostMapping("/updateExercise")
+    public String updateExercise(
+            @RequestParam("exerciseStatus") boolean completed,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
         }
 
-        return "redirect:/waterLog";
+        Services services = new Services();
+        services.logExercise(user, completed);
+
+        redirectAttributes.addFlashAttribute("alert", "Exercise status updated successfully!");
+        return "redirect:/exerciseLog";
+    }
+
+    // Meal tracking methods
+    @GetMapping("/mealLog")
+    public String mealLogPage(Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        Services services = new Services();
+        LocalDateTime today = LocalDateTime.now();
+        boolean[] mealStatus = services.getMealStatus(user, today);
+
+        model.addAttribute("mealStatus", mealStatus);
+
+        return "mealLog";
+    }
+
+    @PostMapping("/updateMeal")
+    public String updateMeal(
+            @RequestParam("mealNumber") int mealNumber,
+            @RequestParam("completed") boolean completed,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        if (mealNumber < 1 || mealNumber > 6) {
+            redirectAttributes.addFlashAttribute("error", "Invalid meal number");
+        } else {
+            Services services = new Services();
+            services.logMeal(user, mealNumber, completed);
+            redirectAttributes.addFlashAttribute("alert", "Meal status updated successfully!");
+        }
+
+        return "redirect:/mealLog";
     }
 
 }
