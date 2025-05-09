@@ -172,7 +172,7 @@
                             </div>
                             <div class="mt-2 text-sm">
                                 <span class="block"><i class="fas fa-utensils mr-2"></i> <%=currentDiet.getTotalMeals()%> meals/day</span>
-                                <span class="block mt-1"><i class="fas fa-glass-water mr-2"></i> <%=currentDiet.getWaterIntake()%> glasses</span>
+                                <span class="block mt-1"><i class="fas fa-glass-water mr-2"></i> <%=currentDiet.getWaterIntake()%> litres</span>
                             </div>
                         </div>
                         <% } %>
@@ -316,7 +316,7 @@
                 <div class="border border-gray-200 rounded-lg p-6 mb-6">
                     <div class="flex justify-between items-center mb-4">
                         <h4 class="text-xl font-bold">Diets you have made</h4>
-                        <a href="dietmanager?c=0" class="text-sm text-blue-600 hover:text-blue-800">
+                        <a href="dietmanager?c=0" class="text-sm text-black-600 hover:text-black-800">
                             <i class="fas fa-plus mr-1"></i> Create New
                         </a>
                     </div>
@@ -330,7 +330,7 @@
                                     <h5 class="font-bold text-lg"><%= diet.getDietName() %></h5>
                                     <div class="text-sm text-gray-600 mt-1">
                                         <span class="mr-3"><i class="fas fa-utensils mr-1"></i> <%= diet.getTotalMeals() %> meals</span>
-                                        <span class="mr-3"><i class="fas fa-glass-water mr-1"></i> <%= diet.getWaterIntake() %> glasses</span>
+                                        <span class="mr-3"><i class="fas fa-glass-water mr-1"></i> <%= diet.getWaterIntake() %> litres</span>
                                         <span><%= diet.getDietType() %></span>
                                     </div>
                                 </div>
@@ -339,7 +339,7 @@
                                     <button onclick="openEditModal(<%= diet.getDietId() %>, '<%= diet.getDietName().replace("'", "\\'") %>', '<%= diet.getDietType().replace("'", "\\'") %>',
                                         <%= diet.getTotalMeals() %>, <%= diet.getWaterIntake() %>,
                                             '<%= diet.getDietPreference().replace("'", "\\'") %>', <%= diet.getExercise() %>,<%=diet.getDietId()%>)"
-                                            class="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50"
+                                            class="text-black-600 hover:text-black-800 p-2 rounded-full hover:bg-black-50"
                                             title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -408,7 +408,7 @@
                             </div>
                             <div>
                                 <span class="block text-sm text-gray-600">Water</span>
-                                <span class="font-medium"><%=currentDiet.getWaterIntake()%> glasses</span>
+                                <span class="font-medium"><%=currentDiet.getWaterIntake()%> litres</span>
                             </div>
                             <div>
                                 <span class="block text-sm text-gray-600">Exercise</span>
@@ -481,7 +481,7 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Water Intake (glasses)</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Water Intake (litres)</label>
                 <input type="number" id="editWaterIntake" name="waterIntake" min="1" max="20" required
                        class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black">
             </div>
