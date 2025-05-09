@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diet Planner - Choose a Diet</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/ico" href="healthy-food.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="flex flex-col h-screen overflow-hidden bg-white text-black">
@@ -18,10 +19,14 @@
         User user = (User) session.getAttribute("user");
         if(user != null){
     %>
-    <div class="text-lg">
+    <div class="flex gap-4">
+        <a href="dashboard" class="flex items-center gap-2 hover:text-gray-600">
+            <i class="fas fa-home text-lg mr-1"></i> <!-- Smaller Icon -->
+            <span class="text-lg">Dashboard</span>
+        </a>
         <a href="profile" class="flex items-center gap-2 hover:text-gray-600" title="Profile">
-            <i class="fas fa-user-circle text-3xl"></i>
-            <span><%=user.getFullName()%></span>
+            <i class="fas fa-user-circle text-lg"></i> <!-- Smaller Icon -->
+            <span class="text-lg"><%=user.getFullName()%></span> <!-- Smaller Text -->
         </a>
     </div>
     <%

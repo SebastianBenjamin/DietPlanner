@@ -26,6 +26,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diet Planner - Profile</title>
+    <link rel="icon" type="image/ico" href="healthy-food.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
@@ -81,8 +83,8 @@
 
 <!-- Content Area -->
 <div class="flex-1 overflow-y-auto p-6">
+        <h3 class="text-xl font-bold mb-6">User Profile</h3>
     <div class="max-w-4xl mx-auto">
-        <h3 class="text-2xl font-bold mb-6">User Profile</h3>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             <!-- Profile Summary Card -->
