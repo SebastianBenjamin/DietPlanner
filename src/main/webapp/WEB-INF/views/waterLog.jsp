@@ -1,45 +1,42 @@
 <%@ page import="org.classFiles.User" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.time.format.DateTimeFormatter" %>
-<%@ page import="org.classFiles.LogData" %>
 <%@ page errorPage="error.jsp" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Water Log - Diet Planner</title>
+  <title>Diet Planner - Water Log </title>
+  <link rel="icon" type="image/ico" href="healthy-food.png">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body class="flex flex-col h-screen bg-gray-100">
 <!-- Navbar -->
-
-<div class="h-24 border border-black flex items-center justify-between text-3xl font-bold px-6">
-  <div>Diet Planner</div>
+<div class="h-24 border-b bg-white shadow flex items-center justify-between px-6">
+  <div class="text-3xl font-bold">Diet Planner</div>
 
   <%
     User user = (User) session.getAttribute("user");
-    if(user != null){
-  %>
-  <div class="flex gap-4">
-
-    <a href="profile" class="flex items-center gap-2 hover:text-gray-600" title="Profile">
-      <i class="fas fa-user-circle text-lg"></i> <!-- Smaller Icon -->
-      <span class="text-lg"><%=user.getFullName()%></span> <!-- Smaller Text -->
-    </a>
-  </div>
-
-  <%
-  } else {
-    response.sendRedirect("login");
-  %>
-  <div class="text-lg">Please log in</div>
-  <%
+    if(user == null) {
+      response.sendRedirect("login");
+      return;
     }
   %>
-
+  <div class="flex gap-4">
+    <a href="dashboard" class="flex items-center gap-2 hover:text-gray-600">
+      <i class="fas fa-home text-lg mr-1"></i>
+      <span class="text-lg">Dashboard</span>
+    </a>
+    <a href="profile" class="flex items-center gap-2 hover:text-gray-600" title="Profile">
+      <i class="fas fa-user-circle text-lg"></i>
+      <span class="text-lg"><%=user.getFullName()%></span>
+    </a>
+  </div>
 </div>
 
 <!-- Content -->
@@ -47,6 +44,11 @@
   <div class="bg-white p-6 rounded-lg shadow-md">
     <h1 class="text-2xl font-bold mb-6 text-center">Water Tracking</h1>
 
+    <% if(user.getDiet() == null) { %>
+    <div class="bg-blue-100 text-blue-700 border border-blue-400 px-4 py-3 rounded mb-4">
+      <p>You don't have a diet plan. Please set up a diet plan first.</p>
+    </div>
+    <% } else { %>
     <!-- Progress -->
     <%
       int todayWaterIntake = (Integer)request.getAttribute("todayWaterIntake");
@@ -85,7 +87,19 @@
         </div>
       </div>
     </form>
-<%--   reset btn to reset the water --%>
+
+    <!-- Today's Logs -->
+    <div>
+      <h2 class="text-xl font-semibold mb-3">Today's logs</h2>
+      <div class="overflow-y-auto max-h-64">
+        <table class="w-full">
+          <!-- Table content -->
+          <!-- ... -->
+        </table>
+      </div>
+    </div>
+
+    <!-- Reset button -->
     <div class="mt-6 text-center border-t pt-4">
       <form action="resetWaterLog" method="post">
         <button type="submit"
@@ -94,6 +108,7 @@
         </button>
       </form>
     </div>
+    <% } %>
   </div>
 </div>
 
