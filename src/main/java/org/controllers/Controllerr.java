@@ -186,13 +186,24 @@ public class Controllerr {
         try {
             tx = s.beginTransaction();
 
-            Diet diet = s.get(Diet.class, Integer.parseInt(request.getParameter("id")));
+            int dietId = Integer.parseInt(request.getParameter("id"));
+            Diet diet = s.get(Diet.class, dietId);
 
             if (diet != null) {
-                // Check if this diet is associated with the current user
-                if (user.getDiet() != null && user.getDiet().getDietId() == diet.getDietId()) {
-                    user.setDiet(null);
+                // First, find all users using this diet and set their diet to null
+                String hql = "FROM User WHERE diet.dietId = :dietId";
+                List<User> usersWithThisDiet = s.createQuery(hql, User.class)
+                        .setParameter("dietId", dietId)
+                        .list();
 
+                for (User u : usersWithThisDiet) {
+                    u.setDiet(null);
+                    s.update(u);
+                }
+
+                // Check if current user is using this diet
+                if (user.getDiet() != null && user.getDiet().getDietId() == dietId) {
+                    user.setDiet(null);
                     s.update(user);
                     session.setAttribute("user", user);
                 }
@@ -200,8 +211,6 @@ public class Controllerr {
                 // Then delete the diet
                 s.delete(diet);
                 tx.commit();
-
-                // Refresh session attributes
 
                 session.setAttribute("alert", "Diet deletion successful!");
             }
@@ -284,8 +293,8 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
         LocalDateTime today = LocalDateTime.now();
         int todayWaterIntake = services.getTotalWaterIntake(user, today);
 
-        // Get water intake goal from user's diet or use default
-        int dailyGoal = 2000; // Default 2L goal
+
+        int dailyGoal = 2000;
         if (user.getDiet() != null && user.getDiet().getWaterIntake() > 0) {
             dailyGoal = user.getDiet().getWaterIntake() * 1000;
         }
