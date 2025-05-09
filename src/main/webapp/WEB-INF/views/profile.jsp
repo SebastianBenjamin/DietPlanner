@@ -81,7 +81,7 @@
 
             document.getElementById('editDietId').value = dietId;
             document.getElementById('editDietName').value = dietName;
-            document.getElementById('editDietType').selected = dietType;
+            document.getElementById('editDietType').value = dietType;
             document.getElementById('editTotalMeals').value = totalMeals;
             document.getElementById('editWaterIntake').value = waterIntake;
             document.getElementById('editDietPreference').value = dietPreference;
@@ -464,12 +464,12 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Diet Type</label>
                 <select id="editDietType" name="dietType" required
                         class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black">
-                    <option value="balanced">Balanced</option>
-                    <option value="lowCarb">Low Carb</option>
-                    <option value="lowFat">Low Fat</option>
-                    <option value="highProtein">High Protein</option>
-                    <option value="vegetarian">Vegetarian</option>
-                    <option value="custom">Custom</option>
+                    <option value="Balanced">Balanced</option>
+                    <option value="Low Carb">Low Carb</option>
+                    <option value="Low Fat">Low Fat</option>
+                    <option value="High Protein">High Protein</option>
+                    <option value="Vegetarian">Vegetarian</option>
+                    <option value="Custom">Custom</option>
                 </select>
             </div>
 
@@ -489,8 +489,8 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Diet Preference</label>
                 <select id="editDietPreference" name="dietPreference" required
                         class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black">
-                    <option value="veg">Vegetarian</option>
-                    <option value="nonveg">Non Vegetarian</option>
+                    <option value="Vegetarian">Vegetarian</option>
+                    <option value="Non Vegetarian">Non Vegetarian</option>
                 </select>
             </div>
 

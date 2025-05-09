@@ -59,12 +59,12 @@
                     <label for="dietType" class="block text-sm font-medium text-gray-700">Diet Type</label>
                     <select id="dietType" name="dietType" required
                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <option value="balanced">Balanced</option>
-                        <option value="lowCarb">Low Carb</option>
-                        <option value="lowFat">Low Fat</option>
-                        <option value="highProtein">High Protein</option>
-                        <option value="vegetarian">Vegetarian</option>
-                        <option value="custom">Custom</option>
+                        <option value="Balanced">Balanced</option>
+                        <option value="Low Carb">Low Carb</option>
+                        <option value="Low Fat">Low Fat</option>
+                        <option value="High Protein">High Protein</option>
+                        <option value="Vegetarian">Vegetarian</option>
+                        <option value="Custom">Custom</option>
                     </select>
                 </div>
 
@@ -73,8 +73,8 @@
                     <select id="dietPreference" name="dietPreference" required
                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
 
-                        <option value="veg">Vegetarian</option>
-                        <option value="nonveg">Non Vegetarian</option>
+                        <option value="Vegetarian">Vegetarian</option>
+                        <option value="Non Vegetarian">Non Vegetarian</option>
                     </select>
                 </div>
             </div>
