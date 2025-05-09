@@ -190,4 +190,12 @@ public class LogData implements Serializable {
         this.date = date;
         this.id = id;
     }
+    public int getMeals() {
+        return (meal1 ? 1 : 0) +
+                (meal2 ? 1 : 0) +
+                (meal3 ? 1 : 0) +
+                (meal4 ? 1 : 0) +
+                (meal5 ? 1 : 0) +
+                (meal6 ? 1 : 0);
+    }
 }

@@ -1,5 +1,8 @@
 <%@ page import="org.classFiles.User" %>
 <%@ page import="org.classFiles.Diet" %>
+<%@ page import="org.classFiles.LogData" %>
+<%@ page import="org.hibernate.SessionFactory" %>
+<%@ page import="org.classFiles.Services" %>
 <%@ page errorPage="error.jsp" %>
 
 <!DOCTYPE html>
@@ -104,8 +107,55 @@
         <div class="h-16 border-b border-black flex items-center justify-center font-medium">
             Tracking
         </div>
-        <div class="flex-grow overflow-y-auto max-h-screen max-h-screen flex items-center justify-center">
-            No logged data yet !.
+        <div class="flex-grow overflow-y-auto max-h-screen max-h-screen">
+            <%
+                if(user.getLogId()!=null){
+                LogData logData= Services.getLogDataById(user.getLogId());
+
+                if(logData!=null){
+
+            %>
+            <div class="p-2">
+                <table class="w-full border-collapse">
+                    <thead>
+                    <tr class="bg-gray-100">
+                        <th class="border p-2">Date</th>
+                        <th class="border p-2">Water</th>
+                        <th class="border p-2">Meal</th>
+                        <th class="border p-2">Exercise</th>
+                        <th class="border p-2">Streak</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr class="hover:bg-gray-50">
+                        <td class="border p-2 text-center"><%= logData.getDate() %></td>
+                        <td class="border p-2 text-center"><%= logData.getWater() %> ml</td>
+                        <td class="border p-2 text-center"><%= logData.getMeals() %></td>
+                        <td class="border p-2 text-center"><%=(logData.isExercise()) ? "Yes":"No" %> </td>
+                        <td class="border p-2 text-center"><%= logData.getStreak() %></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <%
+            }  else {
+            %>
+            <div class="flex items-center justify-center h-full">
+                Log data not found!
+            </div>
+            <%
+                }
+                } else {
+            %>
+            <div class="flex items-center justify-center h-full">
+                No log assigned yet!
+            </div>
+            <%
+                }
+            %>
+
         </div>
         <a href="mealLog" class="h-16 border-b border-t border-black flex items-center justify-center w-full hover:bg-gray-100 focus:outline-none">
             <i class="fas fa-utensils mr-2"></i>Meal Log

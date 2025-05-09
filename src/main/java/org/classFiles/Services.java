@@ -291,4 +291,19 @@ public class Services {
             session.close();
         }
     }
+    public static LogData getLogDataById(int logId) {
+        SessionFactory sf = new Configuration().configure().buildSessionFactory();
+        Session session = sf.openSession();
+
+        try {
+            // Get log by its primary key (logId)
+            LogData logData = session.get(LogData.class, logId);
+            return logData;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            session.close();
+        }
+    }
 }
