@@ -85,6 +85,15 @@
         </div>
       </div>
     </form>
+<%--   reset btn to reset the water --%>
+    <div class="mt-6 text-center border-t pt-4">
+      <form action="resetWaterLog" method="post">
+        <button type="submit"
+                class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 flex items-center mx-auto">
+          <i class="fas fa-redo-alt mr-2"></i> Reset Today's Water Log
+        </button>
+      </form>
+    </div>
   </div>
 </div>
 
