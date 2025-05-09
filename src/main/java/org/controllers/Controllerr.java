@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.xml.crypto.Data;
+import javax.xml.stream.events.StartElement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -75,8 +76,7 @@ public class Controllerr {
         }
     }
 @PostMapping("/selectDiet")
-    public String selectDiet(@RequestParam(name ="dietId",required=true,defaultValue = "null")int dietId,@RequestParam(name =
-    "userId",required = true,defaultValue = "null")int userId, Model model, HttpSession session) {
+    public String selectDiet(@RequestParam(name ="dietId",required=true,defaultValue = "null")int dietId, Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login";
@@ -119,6 +119,7 @@ public class Controllerr {
             diet.setDietName(request.getParameter("dietName"));
             diet.setDietType(request.getParameter("dietType"));
             diet.setDietPreference(request.getParameter("dietPreference"));
+            diet.setCreatedBy(user.getUserId().toString());
             if(request.getParameter("exercise").equals("1")){
             diet.setExercise(true);
             }else diet.setExercise(false);
@@ -127,8 +128,6 @@ public class Controllerr {
             session.setAttribute("alert","Diet creation successful ! ");
 
             s.save(diet);
-
-
             user.setDiet(diet);
             s.update(user);
 
@@ -138,8 +137,49 @@ public class Controllerr {
             return "dashboard";
         }
     }
+    @PostMapping("/deleteDiet")
+    public String deleteDiet(HttpServletRequest request, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
 
-@PostMapping("/updateProfile")
+        Transaction tx = null;
+        try {
+            tx = s.beginTransaction();
+
+            Diet diet = s.get(Diet.class, Integer.parseInt(request.getParameter("id")));
+
+            if (diet != null) {
+                // Check if this diet is associated with the current user
+                if (user.getDiet() != null && user.getDiet().getDietId() == diet.getDietId()) {
+                    user.setDiet(null);
+
+                    s.update(user);
+                    session.setAttribute("user", user);
+                }
+
+                // Then delete the diet
+                s.delete(diet);
+                tx.commit();
+
+                // Refresh session attributes
+
+                session.setAttribute("alert", "Diet deletion successful!");
+            }
+
+            return "redirect:/profile";
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            session.setAttribute("alert", "Error deleting diet: " + e.getMessage());
+            return "redirect:/profile";
+        }
+    }
+
+
+    @PostMapping("/updateProfile")
 public String updateProfile(Model model, HttpServletRequest request,HttpSession session) {
     String fullName = request.getParameter("fullName");
     String email = request.getParameter("email");
@@ -192,6 +232,8 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
         return "redirect:/profile";
     }
 }
+
+
 @GetMapping("/waterLog")
 public String waterLogPage(Model model, HttpSession session) {
     User user = (User) session.getAttribute("user");

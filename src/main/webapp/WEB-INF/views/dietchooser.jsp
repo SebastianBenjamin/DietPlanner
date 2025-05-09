@@ -76,7 +76,7 @@
                     </c:if>
                 </ul>
                 <form action="selectDiet" method="post">
-                    <input type="hidden" name="userId" value="${sessionScope.user.userId}">
+
                     <input type="hidden" name="dietId" value="${diet.dietId}">
                     <button type="submit" class="w-full border border-black bg-transparent text-black py-2 px-6 rounded hover:bg-black hover:text-white transition-colors duration-200">
                         Select

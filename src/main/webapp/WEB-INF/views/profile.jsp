@@ -1,6 +1,8 @@
 <%@ page import="org.classFiles.User" %>
 <%@ page import="org.classFiles.Diet" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="java.util.List" %>
+<%@ page import="org.classFiles.Services" %>
 <%@ page errorPage="error.jsp" %>
 
 <%
@@ -10,14 +12,17 @@
         return;
     }
 
-// Format date of birth
+
     String dobFormatted = "";
     if(user.getDateOfBirth() != null) {
         dobFormatted = new SimpleDateFormat("yyyy-MM-dd").format(user.getDateOfBirth());
     }
 
-// Get user's current diet
+
     Diet currentDiet = user.getDiet();
+
+
+    List<Diet> userDiets = Services.getDietsByUser(user.getUserId());
 %>
 
 <!DOCTYPE html>
@@ -63,6 +68,12 @@
             errorElement.textContent = "";
             return true;
         }
+
+        function confirmDelete(dietId) {
+            if (confirm("Are you sure you want to delete this diet plan?")) {
+                window.location.href = "/deleteDiet?id=" + dietId;
+            }
+        }
     </script>
 </head>
 <body class="flex flex-col h-screen overflow-hidden bg-white text-black">
@@ -83,7 +94,7 @@
 
 <!-- Content Area -->
 <div class="flex-1 overflow-y-auto p-6">
-        <h3 class="text-xl font-bold mb-6">User Profile</h3>
+    <h3 class="text-xl font-bold mb-6">User Profile</h3>
     <div class="max-w-4xl mx-auto">
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -254,6 +265,80 @@
                             </button>
                         </div>
                     </form>
+                </div>
+
+                <!-- User's Diets Section -->
+                <div class="border border-gray-200 rounded-lg p-6 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-xl font-bold">Diets you have made</h4>
+                        <a href="dietmanager?c=0" class="text-sm text-blue-600 hover:text-blue-800">
+                            <i class="fas fa-plus mr-1"></i> Create New
+                        </a>
+                    </div>
+
+                    <% if(userDiets != null && !userDiets.isEmpty()) { %>
+                    <div class="space-y-4">
+                        <% for(Diet diet : userDiets) { %>
+                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h5 class="font-bold text-lg"><%= diet.getDietName() %></h5>
+                                    <div class="text-sm text-gray-600 mt-1">
+                                        <span class="mr-3"><i class="fas fa-utensils mr-1"></i> <%= diet.getTotalMeals() %> meals</span>
+                                        <span class="mr-3"><i class="fas fa-glass-water mr-1"></i> <%= diet.getWaterIntake() %> glasses</span>
+                                        <span><%= diet.getDietType() %></span>
+                                    </div>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <!-- Edit Form -->
+                                    <form action="" method="get" class="inline">
+                                        <input type="hidden" name="id" value="<%= diet.getDietId() %>">
+                                        <button type="submit"
+                                                class="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50"
+                                                title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                    </form>
+
+                                    <!-- Delete Form -->
+                                    <form action="deleteDiet" method="post" class="inline" onsubmit="return confirm('Are you sure you want to delete this diet plan?');">
+                                        <input type="hidden" name="id" value="<%= diet.getDietId() %>">
+                                        <button type="submit"
+                                                class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50"
+                                                title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+
+                                    <!-- Set as Current Form -->
+                                    <% if(currentDiet != null && currentDiet.getDietId() == diet.getDietId()) { %>
+                                    <span class="text-green-600 p-2" title="Currently Active">
+            <i class="fas fa-check-circle"></i>
+        </span>
+                                    <% } else { %>
+                                    <form action="selectDiet" method="post" class="inline">
+                                        <input type="hidden" name="dietId" value="<%= diet.getDietId() %>">
+                                        <button type="submit"
+                                                class="text-gray-600 hover:text-black p-2 rounded-full hover:bg-gray-100"
+                                                title="Set as Current">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                    <% } else { %>
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-utensils text-4xl mb-3"></i>
+                        <p>You haven't created any diet plans yet.</p>
+                        <a href="dietmanager?c=0" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">
+                            Create your first diet plan
+                        </a>
+                    </div>
+                    <% } %>
                 </div>
 
                 <!-- Current Diet Plan Section -->

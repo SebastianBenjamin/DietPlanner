@@ -23,7 +23,16 @@ public class Services {
         }
     }
 
-    // Water logging part :)
+    public static List<Diet> getDietsByUser(int userId) {
+        SessionFactory sf = new Configuration().configure().buildSessionFactory();
+        try (Session session = sf.openSession()) {
+            String hql = "FROM Diet WHERE createdBy = :userId";
+            return session.createQuery(hql, Diet.class)
+                    .setParameter("userId", userId)
+                    .getResultList();
+        }
+    }
+
     public void logWaterIntake(User user, int amountMl) {
         SessionFactory sf = new Configuration().configure().buildSessionFactory();
         Session session = sf.openSession();

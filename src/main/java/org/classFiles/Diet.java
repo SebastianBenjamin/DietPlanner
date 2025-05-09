@@ -2,6 +2,7 @@ package org.classFiles;
 
 import jakarta.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,8 +31,32 @@ public class Diet {
     @Column(name = "water_intake")
     private Integer waterIntake;
 
+    @Column(name = "created_by")
+    private String createdBy;
+
+
     @OneToMany(mappedBy = "diet", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<User> users = new HashSet<>();
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Diet(Integer dietId, String dietName, String dietType, String dietPreference, boolean exercise, Integer totalMeals, Integer waterIntake, String createdBy, Set<User> users) {
+        this.dietId = dietId;
+        this.dietName = dietName;
+        this.dietType = dietType;
+        this.dietPreference = dietPreference;
+        this.exercise = exercise;
+        this.totalMeals = totalMeals;
+        this.waterIntake = waterIntake;
+        this.createdBy = createdBy;
+        this.users = users;
+    }
 
     public void setDietId(Integer dietId) {
         this.dietId = dietId;
@@ -111,4 +136,5 @@ public class Diet {
     public void setUsers(Set<User> users) {
         this.users = users;
     }
+
 }
