@@ -321,6 +321,19 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
         return "redirect:/waterLog";
     }
 
+    @PostMapping("/resetWaterLog")
+    public String resetWaterLog(HttpSession session, RedirectAttributes redirectAttributes) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            // Create the Services object first
+            Services services = new Services();
+            services.resetTodayWaterLog(user);
+            redirectAttributes.addFlashAttribute("alert", "Water log has been reset successfully.");
+        }
+        return "redirect:/waterLog";
+    }
+
+
 
     @GetMapping("/exerciseLog")
     public String exerciseLogPage(Model model, HttpSession session) {

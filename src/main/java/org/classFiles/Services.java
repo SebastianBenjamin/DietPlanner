@@ -102,6 +102,35 @@ public class Services {
         }
     }
 
+    public void resetTodayWaterLog(User user) {
+        SessionFactory sf = new Configuration().configure().buildSessionFactory();
+        Session session = sf.openSession();
+        try {
+            session.beginTransaction();
+
+            // Get today's date boundaries using the existing helper method
+            Date today = new Date();
+            Date[] dayRange = getDayBoundaries(today);
+
+            // Update today's entries to reset water to 0
+            Query<?> query = session.createQuery(
+                    "update LogData set water = 0 where user.userId = :userId and date between :startDate and :endDate");
+            query.setParameter("userId", user.getUserId());
+            query.setParameter("startDate", dayRange[0]);
+            query.setParameter("endDate", dayRange[1]);
+            query.executeUpdate();
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session.getTransaction() != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
     // Helper method to convert LocalDateTime to Date
     private Date convertToDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
