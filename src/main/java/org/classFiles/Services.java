@@ -33,13 +33,35 @@ public class Services {
         }
     }
 
+    public void updateUserLogInfo(User user, LogData logData) {
+        SessionFactory sf = new Configuration().configure().buildSessionFactory();
+        Session session = sf.openSession();
+        try {
+            session.beginTransaction();
+
+            // Update user's log info
+            user.setLogDate(logData.getDate());
+            user.setLogId(logData.getId().intValue());
+
+            session.merge(user);
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session.getTransaction() != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+    }
+
     public void logWaterIntake(User user, int amountMl) {
         SessionFactory sf = new Configuration().configure().buildSessionFactory();
         Session session = sf.openSession();
         try {
             session.beginTransaction();
 
-            // Check if a log entry exists for today
             Date today = new Date();
             Date[] dayRange = getDayBoundaries(today);
 
@@ -50,33 +72,28 @@ public class Services {
             query.setParameter("endDate", dayRange[1]);
 
             List<LogData> existingLogs = query.getResultList();
+            LogData logData;
 
             if (existingLogs.isEmpty()) {
-                // Create new log entry for today
-                LogData logData = new LogData(
-                        false,      // exercise
-                        amountMl,   // water
-                        0,          // streak
-                        false,      // meal6
-                        false,      // meal5
-                        false,      // meal4
-                        false,      // meal3
-                        false,      // meal2
-                        false,      // meal1
-                        user.getDiet(), // diet
-                        user,       // user
-                        today,      // date
-                        null        // id - will be generated
-                );
+                logData = new LogData(today, user, user.getDiet());
+                logData.setWater(amountMl);
                 session.persist(logData);
             } else {
-                // Update existing log entry
-                LogData logData = existingLogs.get(0);
+                logData = existingLogs.get(0);
                 logData.setWater(logData.getWater() + amountMl);
                 session.merge(logData);
             }
 
+            user.setLogDate(logData.getDate());
+            user.setLogId(logData.getId().intValue());
+            session.merge(user);
+
             session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session.getTransaction() != null) {
+                session.getTransaction().rollback();
+            }
+            e.printStackTrace();
         } finally {
             session.close();
         }
@@ -218,6 +235,12 @@ public class Services {
             }
 
             session.merge(logData);
+
+            // Update user's log info
+            user.setLogDate(logData.getDate());
+            user.setLogId(logData.getId().intValue());
+            session.merge(user);
+
             session.getTransaction().commit();
         }
     }
@@ -262,29 +285,19 @@ public class Services {
             LogData logData;
 
             if (existingLogs.isEmpty()) {
-                // Create new log entry for today
-                logData = new LogData(
-                        completed,  // exercise
-                        0,          // water
-                        0,          // streak
-                        false,      // meal6
-                        false,      // meal5
-                        false,      // meal4
-                        false,      // meal3
-                        false,      // meal2
-                        false,      // meal1
-                        user.getDiet(), // diet
-                        user,       // user
-                        today,      // date
-                        null        // id
-                );
+                logData = new LogData(today, user, user.getDiet());
+                logData.setExercise(completed);
                 session.persist(logData);
             } else {
-                // Update existing log entry
                 logData = existingLogs.get(0);
                 logData.setExercise(completed);
                 session.merge(logData);
             }
+
+            // Update user's log info
+            user.setLogDate(logData.getDate());
+            user.setLogId(logData.getId().intValue());
+            session.merge(user);
 
             session.getTransaction().commit();
         } finally {
