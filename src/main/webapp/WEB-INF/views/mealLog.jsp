@@ -22,7 +22,10 @@
         if(user != null){
     %>
     <div class="flex gap-4">
-
+        <a href="dashboard" class="flex items-center gap-2 hover:text-gray-600">
+            <i class="fas fa-home text-lg mr-1"></i> <!-- Smaller Icon -->
+            <span class="text-lg">Dashboard</span>
+        </a>
         <a href="profile" class="flex items-center gap-2 hover:text-gray-600" title="Profile">
             <i class="fas fa-user-circle text-lg"></i> <!-- Smaller Icon -->
             <span class="text-lg"><%=user.getFullName()%></span> <!-- Smaller Text -->
