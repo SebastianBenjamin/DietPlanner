@@ -137,6 +137,45 @@ public class Controllerr {
             return "dashboard";
         }
     }
+    @PostMapping("/updateDiet")
+    public String updateDiet(HttpServletRequest request, Model model, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            String dietName = request.getParameter("dietName");
+            String dietType = request.getParameter("dietType");
+            String totalMeals = request.getParameter("totalMeals");
+            String waterIntake = request.getParameter("waterIntake");
+            String dietPreference = request.getParameter("dietPreference");
+            String exercise = request.getParameter("exercise");
+            String dietId = request.getParameter("dietId");
+
+            Diet diet = s.get(Diet.class, Integer.parseInt(dietId));
+            diet.setDietName(dietName);
+            diet.setDietType(dietType);
+            diet.setDietPreference(dietPreference);
+            diet.setTotalMeals(Integer.parseInt(totalMeals));
+            diet.setWaterIntake(Integer.parseInt(waterIntake));
+
+
+            diet.setExercise("on".equals(exercise));
+
+            Transaction tx = s.beginTransaction();
+            s.update(diet);
+            tx.commit();
+
+
+            session.setAttribute("user", user);
+            session.setAttribute("alert","Diet update successful ! ");
+            return "redirect:/profile";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "error";
+        }
+    }
     @PostMapping("/deleteDiet")
     public String deleteDiet(HttpServletRequest request, Model model, HttpSession session) {
         User user = (User) session.getAttribute("user");
@@ -179,7 +218,7 @@ public class Controllerr {
     }
 
 
-    @PostMapping("/updateProfile")
+@PostMapping("/updateProfile")
 public String updateProfile(Model model, HttpServletRequest request,HttpSession session) {
     String fullName = request.getParameter("fullName");
     String email = request.getParameter("email");

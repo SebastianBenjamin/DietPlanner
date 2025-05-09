@@ -72,7 +72,7 @@
                     <label for="dietPreference" class="block text-sm font-medium text-gray-700">Dietary Preference</label>
                     <select id="dietPreference" name="dietPreference" required
                             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                        <option value="none" disabled selected>None</option>
+
                         <option value="veg">Vegetarian</option>
                         <option value="nonveg">Non Vegetarian</option>
                     </select>

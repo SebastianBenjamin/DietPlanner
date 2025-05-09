@@ -74,7 +74,51 @@
                 window.location.href = "/deleteDiet?id=" + dietId;
             }
         }
+
+        function openEditModal(dietId, dietName, dietType, totalMeals, waterIntake, dietPreference, exercise,id) {
+            // Convert exercise to boolean if it's coming as a string
+            const exerciseBool = exercise === 'true' || exercise === true;
+
+            document.getElementById('editDietId').value = dietId;
+            document.getElementById('editDietName').value = dietName;
+            document.getElementById('editDietType').selected = dietType;
+            document.getElementById('editTotalMeals').value = totalMeals;
+            document.getElementById('editWaterIntake').value = waterIntake;
+            document.getElementById('editDietPreference').value = dietPreference;
+            document.getElementById('editExercise').checked = exerciseBool;
+
+
+            // Show the modal
+            const modal = document.getElementById('editDietModal');
+            modal.style.display = 'flex';
+            modal.classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editDietModal');
+            modal.style.display = 'none';
+            modal.classList.add('hidden');
+        }
     </script>
+    <style>
+        #editDietModal {
+            transition: opacity 0.3s ease;
+        }
+        #editDietModal {
+            transition: opacity 0.3s ease;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+            z-index: 1000;
+        }
+
+        #editDietModal.show {
+            display: flex;
+        }
+    </style>
 </head>
 <body class="flex flex-col h-screen overflow-hidden bg-white text-black">
 <!-- Navbar -->
@@ -291,14 +335,13 @@
                                 </div>
                                 <div class="flex space-x-2">
                                     <!-- Edit Form -->
-                                    <form action="" method="get" class="inline">
-                                        <input type="hidden" name="id" value="<%= diet.getDietId() %>">
-                                        <button type="submit"
-                                                class="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50"
-                                                title="Edit">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                    </form>
+                                    <button onclick="openEditModal(<%= diet.getDietId() %>, '<%= diet.getDietName().replace("'", "\\'") %>', '<%= diet.getDietType().replace("'", "\\'") %>',
+                                        <%= diet.getTotalMeals() %>, <%= diet.getWaterIntake() %>,
+                                            '<%= diet.getDietPreference().replace("'", "\\'") %>', <%= diet.getExercise() %>,<%=diet.getDietId()%>)"
+                                            class="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50"
+                                            title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
 
                                     <!-- Delete Form -->
                                     <form action="deleteDiet" method="post" class="inline" onsubmit="return confirm('Are you sure you want to delete this diet plan?');">
@@ -398,6 +441,79 @@
         <span class="text-xs">Profile</span>
     </a>
 </div>
+
+<!-- Edit Diet Modal -->
+<div id="editDietModal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 hidden" style="display: none;">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Edit Diet</h3>
+            <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="editDietForm" action="/updateDiet" method="post" class="space-y-4">
+
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Diet Name</label>
+                <input type="text" id="editDietName" name="dietName" required
+                       class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Diet Type</label>
+                <select id="editDietType" name="dietType" required
+                        class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black">
+                    <option value="balanced">Balanced</option>
+                    <option value="lowCarb">Low Carb</option>
+                    <option value="lowFat">Low Fat</option>
+                    <option value="highProtein">High Protein</option>
+                    <option value="vegetarian">Vegetarian</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Total Meals</label>
+                <input type="number" id="editTotalMeals" name="totalMeals" min="1" max="10" required
+                       class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Water Intake (glasses)</label>
+                <input type="number" id="editWaterIntake" name="waterIntake" min="1" max="20" required
+                       class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black">
+            </div>
+<input type="hidden" name="dietId" id="editDietId" value=""/>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Diet Preference</label>
+                <select id="editDietPreference" name="dietPreference" required
+                        class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black">
+                    <option value="veg">Vegetarian</option>
+                    <option value="nonveg">Non Vegetarian</option>
+                </select>
+            </div>
+
+            <div class="flex items-center">
+                <input type="checkbox" id="editExercise" name="exercise"
+                       class="mr-2 border border-gray-300 rounded focus:ring-black">
+                <label for="editExercise" class="text-sm font-medium text-gray-700">Include Exercise</label>
+            </div>
+
+            <div class="flex justify-end space-x-4 pt-4">
+                <button type="button" onclick="closeEditModal()"
+                        class="border border-black bg-transparent text-black py-2 px-4 rounded hover:bg-black hover:text-white transition-colors duration-200">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="border border-black bg-black text-white py-2 px-6 rounded hover:bg-gray-800 transition-colors duration-200">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     window.onload = function() {
         const alertMessage = '${sessionScope.alert}';
