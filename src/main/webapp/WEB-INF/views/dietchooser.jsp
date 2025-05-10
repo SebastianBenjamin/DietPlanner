@@ -28,6 +28,7 @@
             <i class="fas fa-user-circle text-lg"></i> <!-- Smaller Icon -->
             <span class="text-lg"><%=user.getFullName()%></span> <!-- Smaller Text -->
         </a>
+        <a href="logout" class="px-3 py-1.5 rounded-md border border-red-500 text-red-500 hover:bg-red-50 transition text-lg">Logout</a>
     </div>
     <%
     } else {

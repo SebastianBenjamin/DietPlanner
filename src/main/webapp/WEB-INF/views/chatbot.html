@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DietPlanner AI Assistant</title>
+    <link rel="icon" type="image/ico" href="healthy-food.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .nutrition-label {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #f8fafc;
+        }
+        .nutrition-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+        .nutrition-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 0.95rem;
+        }
+        .nutrition-row.main {
+            font-weight: 500;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 8px;
+        }
+        .nutrition-row.indent {
+            padding-left: 16px;
+        }
+        .nutrition-value {
+            font-weight: 500;
+            color: #334155;
+        }
+        .recommendation-item {
+            margin-bottom: 8px;
+            padding-left: 12px;
+            border-left: 3px solid #4a5568;
+            background-color: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+        .recipe-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background-color: #f8fafc;
+        }
+        .recipe-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+        .recipe-section {
+            margin-bottom: 12px;
+        }
+        .recipe-section-title {
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+        .recipe-list {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .recipe-list li {
+            margin-bottom: 4px;
+        }
+        .undefined-value {
+            color: #94a3b8;
+            font-style: italic;
+        }
+        .section-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #1e293b;
+            margin: 16px 0 8px 0;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .calorie-info {
+            background-color: #f0f9ff;
+            border-left: 4px solid #0369a1;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 12px 0;
+        }
+        .calorie-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .calorie-label {
+            font-weight: 500;
+        }
+        .calorie-value {
+            font-weight: 600;
+            color: #0369a1;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+<div class="container mx-auto px-4">
+    <header class="py-8 border-b border-gray-200">
+        <h1 class="text-3xl font-bold text-center">DietPlanner AI Assistant</h1>
+        <p class="text-center text-gray-600 mt-2">Powered by Gemini AI</p>
+    </header>
+
+    <main class="mt-12 max-w-4xl mx-auto">
+        <div class="bg-gray-50 rounded-lg shadow-lg p-6">
+            <div id="chat-history" class="h-96 overflow-y-auto mb-4 p-4 bg-white rounded border border-gray-200">
+                <div class="flex mb-4">
+                    <div class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center mr-2">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="bg-gray-100 p-3 rounded-lg max-w-[80%]">
+                        <p>Hello! I'm your AI diet assistant powered by Gemini. I can help you with:</p>
+                        <ul class="list-disc pl-5 mt-2">
+                            <li>Personalized meal plans</li>
+                            <li>Nutritional analysis</li>
+                            <li>Recipe suggestions</li>
+                            <li>Dietary advice</li>
+                        </ul>
+                        <p class="mt-2">What would you like help with today?</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-2">
+                <input type="text" id="message-input"
+                       class="flex-grow p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                       placeholder="Ask about recipes, nutrition advice, or meal planning...">
+                <button id="send-button"
+                        class="bg-black text-white px-6 rounded-lg hover:bg-gray-800 transition duration-300">
+                    <i class="fas fa-paper-plane mr-2"></i>Send
+                </button>
+            </div>
+
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-lg border border-gray-200 text-center cursor-pointer hover:shadow-md transition feature-card" data-prompt="I'm looking for healthy recipe ideas for ">
+                    <i class="fas fa-utensils text-2xl mb-2"></i>
+                    <p>Recipe Ideas</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg border border-gray-200 text-center cursor-pointer hover:shadow-md transition feature-card" data-prompt="Can you help me calculate my calorie needs for ">
+                    <i class="fas fa-calculator text-2xl mb-2"></i>
+                    <p>Calorie Calculator</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg border border-gray-200 text-center cursor-pointer hover:shadow-md transition feature-card" data-prompt="I'd like nutritional information about ">
+                    <i class="fas fa-apple-alt text-2xl mb-2"></i>
+                    <p>Nutrition Facts</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-20 py-8 border-t border-gray-200 text-center text-gray-600">
+        <p>&copy; 2025 DietPlanner. All rights reserved.</p>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatHistory = document.getElementById('chat-history');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const GEMINI_API_KEY = "AIzaSyBNPWvxpuAqSunsQ74Equ8eM4UkYljDe0c";
+
+        function addUserMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'flex mb-4 justify-end';
+            messageElement.innerHTML = `
+                    <div class="bg-black text-white p-3 rounded-lg max-w-[80%]">
+                        <p>${message}</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center ml-2">
+                        <i class="fas fa-user"></i>
+                    </div>
+                `;
+            chatHistory.appendChild(messageElement);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function addAIMessage(message) {
+            try {
+                const parsed = JSON.parse(message);
+                if (parsed && typeof parsed === 'object') {
+                    return formatGeminiResponse(parsed);
+                }
+            } catch (e) {}
+
+            const messageElement = document.createElement('div');
+            messageElement.className = 'flex mb-4';
+            messageElement.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center mr-2">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="bg-gray-100 p-3 rounded-lg max-w-[80%]">
+                        <p>${message}</p>
+                    </div>
+                `;
+            chatHistory.appendChild(messageElement);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function formatValue(value) {
+            if (value === undefined || value === 'undefined' || value === null) {
+                return '<span class="undefined-value">not specified</span>';
+            }
+            return value;
+        }
+
+        function formatGeminiResponse(data) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'flex mb-4';
+            
+            let htmlContent = `
+                <div class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center mr-2">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="bg-gray-100 p-3 rounded-lg max-w-[80%]">
+            `;
+
+            // Add description if present
+            if (data.description) {
+                htmlContent += `<p class="mb-3">${data.description}</p>`;
+            }
+
+            // Nutrition Information Section
+            if (data.nutritionInfo) {
+                htmlContent += `<div class="section-title">Nutritional Information</div>`;
+                
+                // Handle both single nutrition object and array of nutrition objects
+                const nutritionItems = Array.isArray(data.nutritionInfo) ? data.nutritionInfo : [data.nutritionInfo];
+                
+                nutritionItems.forEach(food => {
+                    if (!food || typeof food !== 'object') return;
+                    
+                    htmlContent += `
+                        <div class="nutrition-label">
+                            <div class="nutrition-title">${food.name || 'Nutrition Facts'}</div>
+                            ${food.servingSize ? `<div class="text-sm text-gray-600 mb-3">Serving Size: ${formatValue(food.servingSize)}</div>` : ''}
+                            
+                            <div class="nutrition-row main">
+                                <span class="font-medium">Calories</span>
+                                <span class="nutrition-value">${formatValue(food.calories)}</span>
+                            </div>
+                            
+                            <div class="nutrition-row">
+                                <span>Total Fat</span>
+                                <span class="nutrition-value">${formatValue(food.fat || food.totalFat)}</span>
+                            </div>
+                            ${food.saturatedFat ? `
+                            <div class="nutrition-row indent">
+                                <span>Saturated Fat</span>
+                                <span class="nutrition-value">${formatValue(food.saturatedFat)}</span>
+                            </div>` : ''}
+                            ${food.transFat ? `
+                            <div class="nutrition-row indent">
+                                <span>Trans Fat</span>
+                                <span class="nutrition-value">${formatValue(food.transFat)}</span>
+                            </div>` : ''}
+                            
+                            ${food.cholesterol ? `
+                            <div class="nutrition-row">
+                                <span>Cholesterol</span>
+                                <span class="nutrition-value">${formatValue(food.cholesterol)}</span>
+                            </div>` : ''}
+                            
+                            ${food.sodium ? `
+                            <div class="nutrition-row">
+                                <span>Sodium</span>
+                                <span class="nutrition-value">${formatValue(food.sodium)}</span>
+                            </div>` : ''}
+                            
+                            ${food.carbohydrates || food.carbohydrate ? `
+                            <div class="nutrition-row">
+                                <span>Total Carbohydrate</span>
+                                <span class="nutrition-value">${formatValue(food.carbohydrates || food.carbohydrate)}</span>
+                            </div>` : ''}
+                            ${food.fiber ? `
+                            <div class="nutrition-row indent">
+                                <span>Dietary Fiber</span>
+                                <span class="nutrition-value">${formatValue(food.fiber)}</span>
+                            </div>` : ''}
+                            ${food.sugar ? `
+                            <div class="nutrition-row indent">
+                                <span>Total Sugars</span>
+                                <span class="nutrition-value">${formatValue(food.sugar)}</span>
+                            </div>` : ''}
+                            ${food.addedSugar ? `
+                            <div class="nutrition-row indent">
+                                <span>Added Sugars</span>
+                                <span class="nutrition-value">${formatValue(food.addedSugar)}</span>
+                            </div>` : ''}
+                            
+                            ${food.protein ? `
+                            <div class="nutrition-row">
+                                <span>Protein</span>
+                                <span class="nutrition-value">${formatValue(food.protein)}</span>
+                            </div>` : ''}
+                            
+                            <!-- Vitamins and Minerals -->
+                            ${food.vitaminD ? `
+                            <div class="nutrition-row">
+                                <span>Vitamin D</span>
+                                <span class="nutrition-value">${formatValue(food.vitaminD)}</span>
+                            </div>` : ''}
+                            
+                            ${food.calcium ? `
+                            <div class="nutrition-row">
+                                <span>Calcium</span>
+                                <span class="nutrition-value">${formatValue(food.calcium)}</span>
+                            </div>` : ''}
+                            
+                            ${food.iron ? `
+                            <div class="nutrition-row">
+                                <span>Iron</span>
+                                <span class="nutrition-value">${formatValue(food.iron)}</span>
+                            </div>` : ''}
+                            
+                            ${food.potassium ? `
+                            <div class="nutrition-row">
+                                <span>Potassium</span>
+                                <span class="nutrition-value">${formatValue(food.potassium)}</span>
+                            </div>` : ''}
+                            
+                            ${food.vitaminA ? `
+                            <div class="nutrition-row">
+                                <span>Vitamin A</span>
+                                <span class="nutrition-value">${formatValue(food.vitaminA)}</span>
+                            </div>` : ''}
+                            
+                            ${food.vitaminC ? `
+                            <div class="nutrition-row">
+                                <span>Vitamin C</span>
+                                <span class="nutrition-value">${formatValue(food.vitaminC)}</span>
+                            </div>` : ''}
+                            
+                            ${food.magnesium ? `
+                            <div class="nutrition-row">
+                                <span>Magnesium</span>
+                                <span class="nutrition-value">${formatValue(food.magnesium)}</span>
+                            </div>` : ''}
+                            
+                            ${food.zinc ? `
+                            <div class="nutrition-row">
+                                <span>Zinc</span>
+                                <span class="nutrition-value">${formatValue(food.zinc)}</span>
+                            </div>` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            // Recipe Section
+            if (data.ingredients && data.instructions) {
+                htmlContent += `
+                    <div class="section-title">${data.description || 'Recipe Details'}</div>
+                    <div class="recipe-card">
+                        ${data.description ? `<div class="recipe-title">${data.description}</div>` : ''}
+                        
+                        <div class="recipe-section">
+                            <div class="recipe-section-title">Ingredients:</div>
+                            <ul class="recipe-list">
+                                ${Array.isArray(data.ingredients) ? 
+                                  data.ingredients.map(ing => `<li>${ing}</li>`).join('') : 
+                                  `<li>${data.ingredients}</li>`}
+                            </ul>
+                        </div>
+                        
+                        <div class="recipe-section">
+                            <div class="recipe-section-title">Instructions:</div>
+                            <ol class="recipe-list" style="list-style-type: decimal;">
+                                ${Array.isArray(data.instructions) ? 
+                                  data.instructions.map((step, i) => `<li>${step}</li>`).join('') : 
+                                  `<li>${data.instructions}</li>`}
+                            </ol>
+                        </div>
+                        
+                        ${data.nutritionInfo ? `
+                        <div class="recipe-section">
+                            <div class="recipe-section-title">Nutrition Information:</div>
+                            <div class="text-sm">
+                                ${data.nutritionInfo.servingSize ? `Serving Size: ${formatValue(data.nutritionInfo.servingSize)}<br>` : ''}
+                                ${data.nutritionInfo.calories ? `Calories: ${formatValue(data.nutritionInfo.calories)}<br>` : ''}
+                                ${data.nutritionInfo.protein ? `Protein: ${formatValue(data.nutritionInfo.protein)}<br>` : ''}
+                                ${data.nutritionInfo.carbohydrates ? `Carbohydrates: ${formatValue(data.nutritionInfo.carbohydrates)}` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            // Calorie Calculation Section
+            if (data.dailyNeeds !== undefined || data.breakfastCalories !== undefined || data.percentageOfDailyNeeds !== undefined) {
+                htmlContent += `
+                    <div class="section-title">Calorie Information</div>
+                    <div class="calorie-info">
+                        ${data.dailyNeeds !== undefined ? `
+                        <div class="calorie-row">
+                            <span class="calorie-label">Estimated Daily Needs:</span>
+                            <span class="calorie-value">${formatValue(data.dailyNeeds)} calories</span>
+                        </div>` : ''}
+                        
+                        ${data.breakfastCalories !== undefined ? `
+                        <div class="calorie-row">
+                            <span class="calorie-label">Breakfast Target:</span>
+                            <span class="calorie-value">${formatValue(data.breakfastCalories)} calories</span>
+                        </div>` : ''}
+                        
+                        ${data.oatmealCalories !== undefined ? `
+                        <div class="calorie-row">
+                            <span class="calorie-label">This Meal Provides:</span>
+                            <span class="calorie-value">${formatValue(data.oatmealCalories)} calories</span>
+                        </div>` : ''}
+                        
+                        ${data.percentageOfDailyNeeds !== undefined ? `
+                        <div class="calorie-row">
+                            <span class="calorie-label">Percentage of Daily Needs:</span>
+                            <span class="calorie-value">${formatValue(data.percentageOfDailyNeeds)}%</span>
+                        </div>` : ''}
+                    </div>
+                `;
+            }
+
+            // Recommendations Section
+            if (data.recommendations && data.recommendations.length) {
+                htmlContent += `
+                    <div class="section-title">Recommendations</div>
+                    <div class="mt-2">
+                        ${Array.isArray(data.recommendations) ? 
+                          data.recommendations.map(item => `<div class="recommendation-item">${item}</div>`).join('') : 
+                          `<div class="recommendation-item">${data.recommendations}</div>`}
+                    </div>
+                `;
+            }
+
+            // Additional Notes Section
+            if (data.notes) {
+                htmlContent += `
+                    <div class="section-title">Additional Notes</div>
+                    <div class="mt-2 text-sm text-gray-600">
+                        ${Array.isArray(data.notes) ? 
+                          data.notes.map(note => `<p class="mb-2">• ${note}</p>`).join('') : 
+                          `<p>${data.notes}</p>`}
+                    </div>
+                `;
+            }
+
+            // If no specific sections but there's text content
+            if (!data.nutritionInfo && !data.ingredients && !data.dailyNeeds && !data.recommendations && data.text) {
+                htmlContent += `<p>${data.text}</p>`;
+            }
+
+            htmlContent += `</div>`;
+            messageElement.innerHTML = htmlContent;
+            chatHistory.appendChild(messageElement);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const typingElement = document.createElement('div');
+            typingElement.id = 'typing-indicator';
+            typingElement.className = 'flex mb-4';
+            typingElement.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center mr-2">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="bg-gray-100 p-3 rounded-lg">
+                        <p>Typing<span class="typing-dots">...</span></p>
+                    </div>
+                `;
+            chatHistory.appendChild(typingElement);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
+        }
+
+        async function fetchGeminiResponse(prompt) {
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{ text: prompt }]
+                        }]
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Gemini API request failed');
+                
+                const data = await response.json();
+                const textResponse = data.candidates[0].content.parts[0].text;
+                
+                try {
+                    const jsonStart = textResponse.indexOf('{');
+                    const jsonEnd = textResponse.lastIndexOf('}') + 1;
+                    const jsonString = textResponse.slice(jsonStart, jsonEnd);
+                    return jsonString;
+                } catch (e) {
+                    console.error('Error parsing Gemini response:', e);
+                    return textResponse;
+                }
+                
+            } catch (error) {
+                console.error('Error fetching Gemini info:', error);
+                return JSON.stringify({
+                    description: "I'm sorry, I'm having trouble connecting to the AI service.",
+                    recommendations: [
+                        "Please check your internet connection and try again.",
+                        "If the problem persists, try again later."
+                    ]
+                });
+            }
+        }
+
+        async function processMessage(message) {
+            if (!message.trim()) return;
+
+            addUserMessage(message);
+            showTypingIndicator();
+
+            try {
+                let prompt = `You are a professional dietitian and nutritionist AI assistant. 
+                Provide detailed, accurate, and helpful information about: ${message}
+
+                For nutrition information, format as JSON with:
+                - nutritionInfo: array of objects with name, servingSize, and nutritional values
+                - recommendations: array of dietary suggestions
+
+                For recipes, include:
+                - description: recipe name
+                - ingredients: array
+                - instructions: array
+                - nutritionInfo: optional basic nutrition facts
+
+                For calorie calculations, include:
+                - description: explanation
+                - dailyNeeds: number
+                - breakfastCalories: optional
+                - oatmealCalories: optional
+                - percentageOfDailyNeeds: optional
+                - recommendations: array
+
+                Example formats:
+                Nutrition:
+                {
+                    "nutritionInfo": [
+                        {
+                            "name": "Food Name",
+                            "servingSize": "1 cup",
+                            "calories": 100,
+                            "fat": "5g",
+                            ...
+                        }
+                    ],
+                    "recommendations": ["Eat in moderation"]
+                }
+
+                Recipe:
+                {
+                    "description": "Recipe Name",
+                    "ingredients": ["1 cup flour"],
+                    "instructions": ["Mix ingredients"],
+                    "nutritionInfo": {
+                        "servingSize": "1 serving",
+                        "calories": 250
+                    }
+                }
+
+                Calorie Calculation:
+                {
+                    "description": "Calculation explanation",
+                    "dailyNeeds": 2000,
+                    "oatmealCalories": 150,
+                    "percentageOfDailyNeeds": 7.5,
+                    "recommendations": ["Adjust serving size"]
+                }`;
+
+                const response = await fetchGeminiResponse(prompt);
+                hideTypingIndicator();
+                addAIMessage(response);
+            } catch (error) {
+                hideTypingIndicator();
+                addAIMessage(JSON.stringify({
+                    description: "I encountered an error processing your request.",
+                    recommendations: [
+                        "Please try again later.",
+                        "If the problem persists, contact support."
+                    ]
+                }));
+                console.error(error);
+            }
+        }
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                processMessage(message);
+                messageInput.value = '';
+            }
+        });
+
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const message = messageInput.value.trim();
+                if (message) {
+                    processMessage(message);
+                    messageInput.value = '';
+                }
+            }
+        });
+
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const prompt = card.getAttribute('data-prompt');
+                messageInput.value = prompt;
+                messageInput.focus();
+            });
+        });
+    });
+</script>
+</body>
+</html>

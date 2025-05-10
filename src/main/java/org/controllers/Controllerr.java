@@ -54,6 +54,11 @@ public class Controllerr {
         return "profile";
 
     }
+@RequestMapping("/logout")
+public String logout(HttpSession session) {
+    session.invalidate();
+    return "index";
+}
 @GetMapping("/dietmanager")
     public String dietmanager(@RequestParam(name = "c", required = false, defaultValue = "0") int cValue,
                               Model model,
