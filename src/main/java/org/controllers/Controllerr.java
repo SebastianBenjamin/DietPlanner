@@ -1,5 +1,6 @@
 package org.controllers;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.classFiles.Diet;
 import org.classFiles.Services;
@@ -33,12 +34,17 @@ public class Controllerr {
     Session s = sf.openSession();
 
 @RequestMapping("/")
-    public String homepage() {
+    public String homepage(Model model, HttpSession session) {
+    if(session.getAttribute("user")!=null){
         return "index";
+    }else{
+        return "dashboard";
+    }
+
     }
 @RequestMapping("/dashboard")
     public String dashboard(Model model, HttpSession session) {
-        User user = s.get(User.class, 1);
+        User user = (User)session.getAttribute("user");
         model.addAttribute("user", user);
         session.setAttribute("user", user);
         return "dashboard";
@@ -325,7 +331,7 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
     public String resetWaterLog(HttpSession session, RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("user");
         if (user != null) {
-            // Create the Services object first
+
             Services services = new Services();
             services.resetTodayWaterLog(user);
             redirectAttributes.addFlashAttribute("alert", "Water log has been reset successfully.");
@@ -408,5 +414,67 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
 
         return "redirect:/mealLog";
     }
+@RequestMapping("/login")
+    public String login(Model model, HttpSession session) {
+    User user = (User) session.getAttribute("user");
+    if (user == null) {
+        return "login";
+    }else{
+        model.addAttribute("user", user);
+        return "dashboard";
+    }
 
+
+}
+@RequestMapping("/signup")
+    public String signup(Model model, HttpSession session) {
+    User user=(User) session.getAttribute("user");
+    if (user == null) {
+        return "signup";
+    }else{
+        model.addAttribute("user", user);
+        session.removeAttribute("alert");
+        return "dashboard";
+    }
+}
+@PostMapping("authenticateUser")
+    public String authenticateUser(Model model,HttpSession session,HttpServletRequest request) {
+    String email=request.getParameter("email");
+    String password=request.getParameter("password");
+    if(Services.checkUserAuthentication(email,password)!=null){
+        int uid=Services.checkUserAuthentication(email,password);
+        User user = s.get(User.class, uid);
+        session.setAttribute("user", user);
+        model.addAttribute("user", user);
+        session.removeAttribute("alert");
+        return "dashboard";
+    }else {
+        session.setAttribute("alert", "No user found please register first!");
+        return "redirect:/signup";
+    }
+
+}
+@PostMapping("createUser")
+    public String createUser(Model model,HttpSession session,HttpServletRequest request) {
+    User user=new User();
+    user.setFullName(request.getParameter("fullName"));
+    user.setPassword(request.getParameter("password"));
+    user.setEmail(request.getParameter("email"));
+    user.setPhoneNumber(request.getParameter("phoneNumber"));
+    user.setGender(request.getParameter("gender"));
+    try {
+        Date dob = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("dateOfBirth"));
+        user.setDateOfBirth(dob);
+    } catch (ParseException e) {
+        e.printStackTrace();
+    }
+    user.setHeight(Double.parseDouble(request.getParameter("height")));
+    user.setWeight(Double.parseDouble(request.getParameter("weight")));
+    user.setDietaryPreference(request.getParameter("dietaryPreference"));
+    s.persist(user);
+    model.addAttribute("user", user);
+    session.setAttribute("user", user);
+    session.removeAttribute("alert");
+    return "dashboard";
+}
 }

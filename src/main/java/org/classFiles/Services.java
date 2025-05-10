@@ -2,10 +2,13 @@ package org.classFiles;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -86,6 +89,7 @@ public class Services {
 
             user.setLogDate(logData.getDate());
             user.setLogId(logData.getId().intValue());
+            updateStreak(user);
             session.merge(user);
 
             session.getTransaction().commit();
@@ -153,7 +157,7 @@ public class Services {
         return Date.from(localDateTime.atZone(java.time.ZoneId.systemDefault()).toInstant());
     }
 
-    // Helper method to get start and end of day
+
     private Date[] getDayBoundaries(Date date) {
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.setTime(date);
@@ -224,7 +228,7 @@ public class Services {
                 logData = existingLogs.get(0);
             }
 
-            // Update the appropriate meal field
+
             switch (mealNumber) {
                 case 1: logData.setMeal1(completed); break;
                 case 2: logData.setMeal2(completed); break;
@@ -237,6 +241,7 @@ public class Services {
             session.merge(logData);
 
             // Update user's log info
+            updateStreak(user);
             user.setLogDate(logData.getDate());
             user.setLogId(logData.getId().intValue());
             session.merge(user);
@@ -294,7 +299,7 @@ public class Services {
                 session.merge(logData);
             }
 
-            // Update user's log info
+            updateStreak(user);
             user.setLogDate(logData.getDate());
             user.setLogId(logData.getId().intValue());
             session.merge(user);
@@ -319,4 +324,87 @@ public class Services {
             session.close();
         }
     }
+    public static Integer checkUserAuthentication(String email, String password) {
+        Session session = null;
+        Integer userId = null;
+
+        try {
+            // Initialize session
+            SessionFactory sf = new Configuration().configure().buildSessionFactory();
+            session = sf.openSession();
+            session.beginTransaction();
+
+            // HQL query to get user ID if authentication is successful
+            String hql = "SELECT u.id FROM User u WHERE u.email = :email AND u.password = :password";
+            Query<Integer> query = session.createQuery(hql, Integer.class);
+            query.setParameter("email", email);
+            query.setParameter("password", password);
+
+            // Get user ID if exists, else null
+            userId = query.uniqueResult();
+
+            session.getTransaction().commit();
+        } catch (Exception e) {
+            if (session != null) session.getTransaction().rollback();
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+
+        return userId;
+    }
+
+    public static void updateStreak(User user) {
+        if (user == null) return;
+
+        Date today = new Date();
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yy");
+        String formattedDateString = formatter.format(today);
+        Date formattedDateDate=null;
+        try {
+            formattedDateDate = formatter.parse(formattedDateString);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (user.getLastStreakUpdate() == null || !user.getLastStreakUpdate().toString().equals(formattedDateString)) {
+            SessionFactory sf = new Configuration().configure().buildSessionFactory();
+            Session session = sf.openSession();
+            session.beginTransaction();
+            try {
+                int streak = user.getCurrentStreak();
+                Diet diet = user.getDiet();
+                LogData logData = session.get(LogData.class, user.getLogId());
+
+                // Add proper null checks
+                if (logData != null && diet != null) {
+                    int water = logData.getWater() / 1000;
+                    if (logData.getMeals() == diet.getTotalMeals() &&
+                            water >= diet.getWaterIntake() &&
+                            diet.getExercise() == logData.isExercise()) {
+                        streak = streak + 1;
+                    }
+
+                    user.setLastStreakUpdate(formattedDateDate);
+                    user.setCurrentStreak(streak);
+                    session.update(user);
+                    logData.setStreak(streak);
+                    session.update(logData);
+                }
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                if (session.getTransaction() != null) {
+                    session.getTransaction().rollback();
+                }
+                e.printStackTrace();
+            } finally {
+                session.close();
+            }
+        }
+    }
+
+
+
+
 }

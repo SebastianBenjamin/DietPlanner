@@ -133,7 +133,7 @@
                         <td class="border p-2 text-center"><%= logData.getWater() %> ml</td>
                         <td class="border p-2 text-center"><%= logData.getMeals() %></td>
                         <td class="border p-2 text-center"><%=(logData.isExercise()) ? "Yes":"No" %> </td>
-                        <td class="border p-2 text-center"><%= logData.getStreak() %></td>
+                        <td class="border p-2 text-center"><%= user.getCurrentStreak() %></td>
                     </tr>
 
                     </tbody>

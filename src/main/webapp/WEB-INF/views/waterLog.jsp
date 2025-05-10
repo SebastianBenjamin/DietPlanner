@@ -89,16 +89,7 @@
       </div>
     </form>
 
-    <!-- Today's Logs -->
-    <div>
-      <h2 class="text-xl font-semibold mb-3">Today's logs</h2>
-      <div class="overflow-y-auto max-h-64">
-        <table class="w-full">
-          <!-- Table content -->
-          <!-- ... -->
-        </table>
-      </div>
-    </div>
+
 
     <!-- Reset button -->
     <div class="mt-6 text-center border-t pt-4">

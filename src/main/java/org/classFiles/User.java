@@ -12,6 +12,9 @@ public class User {
     @Column(name = "user_id")
     private Integer userId;
 
+    @Column(name="last_streakUpdate")
+    private Date lastStreakUpdate;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -181,4 +184,11 @@ public class User {
         this.diet = diet;
     }
 
+    public Date getLastStreakUpdate() {
+        return lastStreakUpdate;
+    }
+
+    public void setLastStreakUpdate(Date lastStreakUpdate) {
+        this.lastStreakUpdate = lastStreakUpdate;
+    }
 }
