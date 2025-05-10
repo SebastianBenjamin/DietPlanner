@@ -1,6 +1,7 @@
 package org.classFiles;
 
 import jakarta.servlet.http.HttpSession;
+import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -374,72 +375,97 @@ public class Services {
         return userId;
     }
 
-
     public void updateStreak(User user) {
+        // Initial null checks
         if (user == null || user.getLogId() == null || user.getDiet() == null) {
-            System.out.println("user is null or logId is null or Diet is null");
+            System.out.println("[DEBUG] Invalid input parameters");
             return;
         }
 
+        System.out.println("[DEBUG] Starting streak update for user ID: " + user.getUserId());
+        System.out.println("[DEBUG] Initial user state - LastUpdate: " + user.getLastStreakUpdate() +
+                ", CurrentStreak: " + user.getCurrentStreak());
+
         SessionFactory sf = new Configuration().configure().buildSessionFactory();
         try (Session session = sf.openSession()) {
+            // Disable caching and force database reads
+            session.setCacheMode(CacheMode.REFRESH);
+
             Transaction tx = session.beginTransaction();
 
-            // Refresh the user object to get latest state
-            User refreshedUser = session.get(User.class, user.getUserId());
+            // 1. Get FRESH user data (bypass cache)
+            session.clear();
+            User refreshedUser = session.createQuery(
+                            "SELECT u FROM User u LEFT JOIN FETCH u.diet WHERE u.userId = :userId", User.class)
+                    .setParameter("userId", user.getUserId())
+                    .setHint("org.hibernate.cacheMode", "REFRESH")
+                    .uniqueResult();
+
             if (refreshedUser == null) {
-                System.out.println("User not found in database");
+                System.out.println("[ERROR] User not found in database");
                 return;
             }
 
-            LocalDate today = LocalDate.now();
-            Diet diet = refreshedUser.getDiet();
-            LogData logData = session.get(LogData.class, refreshedUser.getLogId());
+            // 2. Get FRESH log data (bypass cache)
+            session.clear();
+            LogData logData = session.createQuery(
+                            "SELECT l FROM LogData l WHERE l.id = :logId", LogData.class)
+                    .setParameter("logId", refreshedUser.getLogId())
+                    .setHint("org.hibernate.cacheMode", "REFRESH")
+                    .uniqueResult();
 
             if (logData == null) {
-                System.out.println("LogData not found for user");
+                System.out.println("[ERROR] LogData not found for logId: " + refreshedUser.getLogId());
                 return;
             }
 
+            System.out.println("[DEBUG] FRESH DATA - UserLastUpdate: " + refreshedUser.getLastStreakUpdate() +
+                    ", LogDate: " + logData.getDate());
+
+            LocalDate today = LocalDate.now();
             LocalDate lastUpdate = refreshedUser.getLastStreakUpdate();
+            boolean isNewDay = lastUpdate == null || !lastUpdate.equals(today);
 
-            if (lastUpdate == null || !lastUpdate.equals(today)) {
-                System.out.println("Values\n" +
-                        "diet.getExercise() : " + diet.getExercise() +
-                        "\nlogData.isExercise() : " + logData.isExercise() +
-                        "\ndiet.getTotalMeals() : " + diet.getTotalMeals() +
-                        "\nlogData.getMeals() : " + logData.getMeals() +
-                        "\ndiet.getWaterIntake() : " + diet.getWaterIntake() +
-                        "\nwaterIntake : " + logData.getWater() +
-                        "\ndb date : " + lastUpdate +
-                        "\ntoday : " + today);
+            System.out.println("[DEBUG] Date check - Today: " + today +
+                    ", DB LastUpdate: " + lastUpdate +
+                    ", IsNewDay: " + isNewDay);
 
-                // Convert water intake to milliliters
-                int requiredWaterMl = diet.getWaterIntake() / 1000;
+            if (isNewDay) {
+                // Check streak conditions
+                int requiredWaterMl = refreshedUser.getDiet().getWaterIntake() * 1000;
+                boolean conditionsMet = refreshedUser.getDiet().getExercise() == logData.isExercise()
+                        && refreshedUser.getDiet().getTotalMeals() == logData.getMeals()
+                        && requiredWaterMl <= logData.getWater();
 
-                if (diet.getExercise() == logData.isExercise() &&
-                        diet.getTotalMeals() == logData.getMeals() &&
-                        requiredWaterMl <= logData.getWater()) {
+                if (conditionsMet) {
+                    int newStreak = (refreshedUser.getCurrentStreak() != null ? refreshedUser.getCurrentStreak() : 0) + 1;
 
-                    System.out.println("Streak Completed");
-                    Integer streak = refreshedUser.getCurrentStreak() != null ?
-                            refreshedUser.getCurrentStreak() : 0;
-
-                    refreshedUser.setCurrentStreak(streak + 1);
-                    logData.setStreak(streak + 1);
+                    refreshedUser.setCurrentStreak(newStreak);
+                    logData.setStreak(newStreak);
                     refreshedUser.setLastStreakUpdate(today);
 
                     session.merge(refreshedUser);
                     session.merge(logData);
 
                     // Update the original user object
-                    user.setCurrentStreak(refreshedUser.getCurrentStreak());
-                    user.setLastStreakUpdate(refreshedUser.getLastStreakUpdate());
+                    user.setCurrentStreak(newStreak);
+                    user.setLastStreakUpdate(today);
+
+                    System.out.println("[SUCCESS] Streak updated to: " + newStreak);
+                } else {
+                    System.out.println("[DEBUG] Diet conditions not met");
                 }
+            } else {
+                System.out.println("[DEBUG] Not a new day - LastUpdate already set to today");
             }
+
             tx.commit();
+            System.out.println("[DEBUG] Transaction committed");
         } catch (Exception e) {
+            System.out.println("[ERROR] Exception: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            sf.close();
         }
     }
     }
