@@ -36,9 +36,9 @@ public class Controllerr {
 @RequestMapping("/")
     public String homepage(Model model, HttpSession session) {
     if(session.getAttribute("user")!=null){
-        return "index";
-    }else{
         return "dashboard";
+    }else{
+        return "index";
     }
 
     }

@@ -60,7 +60,7 @@
             <h1 class="text-3xl font-bold text-primary-900">DietPlanner</h1>
             <div class="flex space-x-4">
                 <a href="login" class="px-4 py-2 rounded-lg border border-primary-500 text-primary-500 hover:bg-primary-50 transition">Login</a>
-                <a href="signup" class="px-4 py-2 rounded-lg border border-primary-500 text-primary-500 hover:bg-primary-50 transition">Register</a>
+
             </div>
         </div>
     </header>
