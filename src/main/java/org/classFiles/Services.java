@@ -1,5 +1,6 @@
 package org.classFiles;
 
+import jakarta.servlet.http.HttpSession;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -7,10 +8,13 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Services {
     public List<Diet> getAllDiets() {
@@ -89,10 +93,10 @@ public class Services {
 
             user.setLogDate(logData.getDate());
             user.setLogId(logData.getId().intValue());
-            updateStreak(user);
-            session.merge(user);
 
+            session.merge(user);
             session.getTransaction().commit();
+            updateStreak(user);
         } catch (Exception e) {
             if (session.getTransaction() != null) {
                 session.getTransaction().rollback();
@@ -230,23 +234,36 @@ public class Services {
 
 
             switch (mealNumber) {
-                case 1: logData.setMeal1(completed); break;
-                case 2: logData.setMeal2(completed); break;
-                case 3: logData.setMeal3(completed); break;
-                case 4: logData.setMeal4(completed); break;
-                case 5: logData.setMeal5(completed); break;
-                case 6: logData.setMeal6(completed); break;
+                case 1:
+                    logData.setMeal1(completed);
+                    break;
+                case 2:
+                    logData.setMeal2(completed);
+                    break;
+                case 3:
+                    logData.setMeal3(completed);
+                    break;
+                case 4:
+                    logData.setMeal4(completed);
+                    break;
+                case 5:
+                    logData.setMeal5(completed);
+                    break;
+                case 6:
+                    logData.setMeal6(completed);
+                    break;
             }
 
             session.merge(logData);
 
             // Update user's log info
-            updateStreak(user);
+
             user.setLogDate(logData.getDate());
             user.setLogId(logData.getId().intValue());
             session.merge(user);
 
             session.getTransaction().commit();
+            updateStreak(user);
         }
     }
 
@@ -299,16 +316,18 @@ public class Services {
                 session.merge(logData);
             }
 
-            updateStreak(user);
             user.setLogDate(logData.getDate());
             user.setLogId(logData.getId().intValue());
             session.merge(user);
 
             session.getTransaction().commit();
+            updateStreak(user);
+
         } finally {
             session.close();
         }
     }
+
     public static LogData getLogDataById(int logId) {
         SessionFactory sf = new Configuration().configure().buildSessionFactory();
         Session session = sf.openSession();
@@ -324,6 +343,7 @@ public class Services {
             session.close();
         }
     }
+
     public static Integer checkUserAuthentication(String email, String password) {
         Session session = null;
         Integer userId = null;
@@ -354,57 +374,74 @@ public class Services {
         return userId;
     }
 
-    public static void updateStreak(User user) {
-        if (user == null) return;
 
-        Date today = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yy");
-        String formattedDateString = formatter.format(today);
-        Date formattedDateDate=null;
-        try {
-            formattedDateDate = formatter.parse(formattedDateString);
+    public void updateStreak(User user) {
+        if (user == null || user.getLogId() == null || user.getDiet() == null) {
+            System.out.println("user is null or logId is null or Diet is null");
+            return;
+        }
 
+        SessionFactory sf = new Configuration().configure().buildSessionFactory();
+        try (Session session = sf.openSession()) {
+            Transaction tx = session.beginTransaction();
+
+            // Refresh the user object to get latest state
+            User refreshedUser = session.get(User.class, user.getUserId());
+            if (refreshedUser == null) {
+                System.out.println("User not found in database");
+                return;
+            }
+
+            LocalDate today = LocalDate.now();
+            Diet diet = refreshedUser.getDiet();
+            LogData logData = session.get(LogData.class, refreshedUser.getLogId());
+
+            if (logData == null) {
+                System.out.println("LogData not found for user");
+                return;
+            }
+
+            LocalDate lastUpdate = refreshedUser.getLastStreakUpdate();
+
+            if (lastUpdate == null || !lastUpdate.equals(today)) {
+                System.out.println("Values\n" +
+                        "diet.getExercise() : " + diet.getExercise() +
+                        "\nlogData.isExercise() : " + logData.isExercise() +
+                        "\ndiet.getTotalMeals() : " + diet.getTotalMeals() +
+                        "\nlogData.getMeals() : " + logData.getMeals() +
+                        "\ndiet.getWaterIntake() : " + diet.getWaterIntake() +
+                        "\nwaterIntake : " + logData.getWater() +
+                        "\ndb date : " + lastUpdate +
+                        "\ntoday : " + today);
+
+                // Convert water intake to milliliters
+                int requiredWaterMl = diet.getWaterIntake() / 1000;
+
+                if (diet.getExercise() == logData.isExercise() &&
+                        diet.getTotalMeals() == logData.getMeals() &&
+                        requiredWaterMl <= logData.getWater()) {
+
+                    System.out.println("Streak Completed");
+                    Integer streak = refreshedUser.getCurrentStreak() != null ?
+                            refreshedUser.getCurrentStreak() : 0;
+
+                    refreshedUser.setCurrentStreak(streak + 1);
+                    logData.setStreak(streak + 1);
+                    refreshedUser.setLastStreakUpdate(today);
+
+                    session.merge(refreshedUser);
+                    session.merge(logData);
+
+                    // Update the original user object
+                    user.setCurrentStreak(refreshedUser.getCurrentStreak());
+                    user.setLastStreakUpdate(refreshedUser.getLastStreakUpdate());
+                }
+            }
+            tx.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        if (user.getLastStreakUpdate() == null || !user.getLastStreakUpdate().toString().equals(formattedDateString)) {
-            SessionFactory sf = new Configuration().configure().buildSessionFactory();
-            Session session = sf.openSession();
-            session.beginTransaction();
-            try {
-                int streak = user.getCurrentStreak();
-                Diet diet = user.getDiet();
-                LogData logData = session.get(LogData.class, user.getLogId());
-
-                // Add proper null checks
-                if (logData != null && diet != null) {
-                    int water = logData.getWater() / 1000;
-                    if (logData.getMeals() == diet.getTotalMeals() &&
-                            water >= diet.getWaterIntake() &&
-                            diet.getExercise() == logData.isExercise()) {
-                        streak = streak + 1;
-                    }
-
-                    user.setLastStreakUpdate(formattedDateDate);
-                    user.setCurrentStreak(streak);
-                    session.update(user);
-                    logData.setStreak(streak);
-                    session.update(logData);
-                }
-                session.getTransaction().commit();
-            } catch (Exception e) {
-                if (session.getTransaction() != null) {
-                    session.getTransaction().rollback();
-                }
-                e.printStackTrace();
-            } finally {
-                session.close();
-            }
-        }
+    }
     }
 
 
-
-
-}

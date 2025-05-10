@@ -1,6 +1,8 @@
 package org.classFiles;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -13,7 +15,7 @@ public class User {
     private Integer userId;
 
     @Column(name="last_streakUpdate")
-    private Date lastStreakUpdate;
+    private LocalDate lastStreakUpdate;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -184,11 +186,11 @@ public class User {
         this.diet = diet;
     }
 
-    public Date getLastStreakUpdate() {
+    public LocalDate getLastStreakUpdate() {
         return lastStreakUpdate;
     }
 
-    public void setLastStreakUpdate(Date lastStreakUpdate) {
+    public void setLastStreakUpdate(LocalDate lastStreakUpdate) {
         this.lastStreakUpdate = lastStreakUpdate;
     }
 }
