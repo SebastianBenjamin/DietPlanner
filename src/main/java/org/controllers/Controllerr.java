@@ -1,7 +1,7 @@
 package org.controllers;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.classFiles.Diet;
 import org.classFiles.Services;
 import org.classFiles.User;
@@ -9,26 +9,33 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.RequestParam;
-
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.Map;
 
 
 
 @Controller
 public class Controllerr {
+
+    private static final Logger logger = LoggerFactory.getLogger(Controllerr.class);
+
     Configuration cfg = new Configuration().configure();
     SessionFactory sf = cfg.buildSessionFactory();
     Session s = sf.openSession();
@@ -482,4 +489,82 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
     session.removeAttribute("alert");
     return "dashboard";
 }
+
+    @PostMapping("/chatbot")
+    @ResponseBody
+    public Map<String, String> chatbotResponse(@RequestBody Map<String, String> payload) {
+        logger.info("Received chat request: {}", payload);
+        String message = payload.get("message");
+        Map<String, String> response = new HashMap<>();
+
+        try {
+            String apiKey = "AIzaSyAVyDNJPcO107Tm4ddMCERLiqMvwZh87po";
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=" + apiKey))
+                    .header("Content-Type", "application/json")
+                    .POST(HttpRequest.BodyPublishers.ofString("""
+                {
+                    "contents": [
+                        {
+                            "role": "user",
+                            "parts": [{"text": "You are a professional nutritionist and diet planner. Answer the following question concisely: %s"}]
+                        }
+                    ],
+                    "generationConfig": {
+                        "temperature": 0.7,
+                        "maxOutputTokens": 800
+                    }
+                }
+                """.formatted(message)))
+                    .build();
+
+            HttpResponse<String> apiResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
+            logger.info("Gemini API response status: {}", apiResponse.statusCode());
+            logger.debug("Gemini API response body: {}", apiResponse.body());
+
+            if (apiResponse.statusCode() == 200) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(apiResponse.body());
+
+                    if (jsonResponse.has("candidates") && jsonResponse.getJSONArray("candidates").length() > 0) {
+                        JSONObject candidate = jsonResponse.getJSONArray("candidates").getJSONObject(0);
+
+                        if (candidate.has("content") &&
+                                candidate.getJSONObject("content").has("parts") &&
+                                candidate.getJSONObject("content").getJSONArray("parts").length() > 0) {
+
+                            String responseText = candidate.getJSONObject("content")
+                                    .getJSONArray("parts")
+                                    .getJSONObject(0)
+                                    .getString("text");
+
+                            response.put("response", responseText);
+                            return response;
+                        }
+                    }
+
+                    response.put("response", "API response format issue. Raw response: " + apiResponse.body().substring(0, 200) + "...");
+                } catch (Exception e) {
+                    logger.error("Error parsing Gemini API response: {}", e.getMessage());
+                    response.put("response", "Failed to parse API response: " + e.getMessage());
+                }
+            } else {
+                logger.error("API error response: {} - {}", apiResponse.statusCode(), apiResponse.body());
+                response.put("response", "API returned error status: " + apiResponse.statusCode() +
+                        ". Details: " + apiResponse.body());
+            }
+
+        } catch (Exception e) {
+            logger.error("Error in chatbot request", e);
+            response.put("response", "Server error: " + e.getMessage());
+        }
+
+        return response;
+    }
+    @GetMapping("/chat")
+    public String chatPage() {
+        return "chat";
+    }
 }
