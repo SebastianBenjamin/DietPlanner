@@ -110,16 +110,11 @@
     </div>
 </div>
 <!-- Floating Chat Button -->
-<div class="fixed bottom-6 right-6 z-50 group">
-    <a href="chat" class="flex items-center justify-center h-14 w-14 rounded-full bg-gray-900 text-white shadow-lg hover:bg-gray-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-        <i class="fas fa-comment-dots text-2xl"></i>
+<div class="fixed bottom-6 right-6 z-50">
+    <a href="chat" class="flex items-center justify-center h-14 w-14 rounded-full bg-gray-900 text-white shadow-lg hover:bg-gray-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" title="Chat with Nutri Mate">
+        <i class="fas fa-user-tie text-2xl"></i>
     </a>
-    <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">AI</span>
-
-    <!-- Tooltip that appears on hover -->
-    <span class="absolute right-16 whitespace-nowrap bg-gray-800 text-white text-sm px-3 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-    Chat with AI Assistant
-  </span>
+    <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">Nutri Mate</span>
 </div>
 </body>
 </html>
