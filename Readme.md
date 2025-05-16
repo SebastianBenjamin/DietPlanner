@@ -1,7 +1,7 @@
 
 # Diet Planner - Personalized Nutrition Assistant 🥗
 
-![Diet Planner Logo](https://raw.githubusercontent.com/SebastianBenjamin/DietPlanner/main/src/main/webapp/WEB-INF/views/healthy-food.png)
+![Application Screenshot](https://github.com/SebastianBenjamin/DietPlanner/blob/main/src/main/screenshots/img.png?raw=true)
 
 ### ![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github\&style=for-the-badge) 
 
@@ -170,4 +170,6 @@ DietPlanner/
 
 💡 **Pro Tip:** For optimal results, use the application consistently to benefit from the streak system and receive increasingly personalized recommendations from our AI nutrition assistant, Nutri Mate!
 
-![Application Screenshot](https://raw.githubusercontent.com/SebastianBenjamin/DietPlanner/main/screenshots/img)
+![Application Screenshot](https://github.com/SebastianBenjamin/DietPlanner/blob/main/src/main/screenshots/img.png?raw=true)
+![Application Screenshot](https://github.com/SebastianBenjamin/DietPlanner/blob/main/src/main/screenshots/img_1.png?raw=true)
+![Application Screenshot](https://github.com/SebastianBenjamin/DietPlanner/blob/main/src/main/screenshots/img_2.png?raw=true)
