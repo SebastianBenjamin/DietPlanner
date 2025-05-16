@@ -1,5 +1,5 @@
 
-# Diet Planner - Personalized Nutrition Assistant 🥗
+# Diet Planner - Personalized Nutrition App 🥗
 
 
 ![Application Screenshot](https://github.com/SebastianBenjamin/DietPlanner/blob/main/src/main/screenshots/img.png?raw=true)
