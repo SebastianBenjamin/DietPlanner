@@ -9,6 +9,7 @@
 
 ## 📝 Table of Contents
 - [About](#-about)
+- [Development Team](#-development-team)
 - [Key Features](#-key-features)
 - [Technology Stack](#-technology-stack)
 - [System Requirements](#-system-requirements)
@@ -16,8 +17,9 @@
 - [Database Configuration](#-database-configuration)
 - [Application Deployment](#-application-deployment)
 - [Project Architecture](#-project-architecture)
-- [Development Team](#-development-team)
-- [License](#-license)
+- [App Navigation Guide](#-app-navigation-guide)
+
+
 
 ## 🌟 About
 
@@ -28,6 +30,17 @@ Diet Planner is a **Spring-Hibernate** based web application that revolutionizes
 - 📈 Comprehensive progress tracking with actionable insights
 - 🤖 Intelligent AI assistant for real-time nutrition guidance
 - 📱 Responsive design for seamless cross-device experience
+
+## 👨‍💻 Development Team
+
+### Core Contributors
+
+| Name | GitHub | Contributions |
+|------|--------|---------------|
+| Akshay Venugopalan | [@akshayvenu](https://github.com/akshayvenu) | Logging systems, AI chatbot integration |
+| Benjamin Sebastian | [@SebastianBenjamin](https://github.com/SebastianBenjamin) | Dashboard UI, diet management, streak logic |
+| Shravya Salian | [@salianShravya](https://github.com/salianShravya) | Authentication system, UI components |
+
 
 ## ✨ Key Features
 
@@ -154,18 +167,36 @@ DietPlanner/
 ├── pom.xml                            # Build configuration
 └── dietplanner.sql                    # Database schema
 ```
+## 🌐 App Navigation Guide
 
-## 👨‍💻 Development Team
+The Diet Planner application includes several key pages with interactive UI elements that trigger specific endpoints. Below is a comprehensive navigation map showing both pages and their associated actions:
 
-### Core Contributors
-
-| Name | GitHub | Contributions |
-|------|--------|---------------|
-| Akshay Venugopalan | [@akshayvenu](https://github.com/akshayvenu) | Logging systems, AI chatbot integration |
-| Benjamin Sebastian | [@SebastianBenjamin](https://github.com/SebastianBenjamin) | Dashboard UI, diet management, streak logic |
-| Shravya Salian | [@salianShravya](https://github.com/salianShravya) | Authentication system, UI components |
-
-
+| Page | UI Element/Action                 | Triggered Endpoint | Description |
+|------|-----------------------------------|-------------------|-------------|
+| **Dashboard** | Page Load                         | `/dashboard` | Main page showing current diet plan, daily salad recommendation, and tracking summary |
+| | "Choose a diet" link              | `/dietmanager?c=1` | Navigate to diet selection page |
+| | "Make a Diet" link                | `/dietmanager?c=0` | Navigate to custom diet creation page |
+| | "Cancel Diet" button              | `/cancelDiet` (POST) | Remove current diet plan |
+| | "Meal Log" link                   | `/mealLog` | Navigate to meal tracking page |
+| | "Water Log" link                  | `/waterLog` | Navigate to water intake tracking page |
+| | "Exercise Log" link               | `/exerciseLog` | Navigate to exercise tracking page |
+| | "Nutri Mate" button               | `/chat` | Open nutrition assistant chatbot |
+| **Diet Chooser** | Page Load                         | `/dietmanager?c=1` | Display available diet plans |
+| | "Select" button                   | `/selectDiet` (POST) | Choose specific diet plan |
+| | "Create Custom Diet" link         | `/dietmanager?c=0` | Navigate to diet creation page |
+| **Diet Maker** | Page Load                         | `/dietmanager?c=0` | Show diet creation form |
+| | "Create Diet Plan" button         | `/makeDiet` (POST) | Submit custom diet information |
+| **Meal Log** | Page Load                         | `/mealLog` | Show meal tracking interface |
+| | "Mark Complete/Incomplete" button | `/updateMeal` (POST) | Update meal status |
+| **Water Log** | Page Load                         | `/waterLog` | Show water tracking interface |
+| | Water amount buttons              | `/addWaterLog` (POST) | Add specific water amount |
+| | "Reset Today's Water Log" button  | `/resetWaterLog` (POST) | Clear today's water intake data |
+| **Exercise Log** | Page Load                         | `/exerciseLog` | Show exercise tracking interface |
+| | "Update Status" button            | `/updateExercise` (POST) | Update exercise completion status |
+| **User Management** | "Profile" icon                    | `/profile` | View user profile information |
+| | "Logout" button                   | `/logout` | End user session |
+### 🔄 Navigation Flow Summary
+![img_1.png](img_1.png)
 ---
 
 💡 **Pro Tip:** For optimal results, use the application consistently to benefit from the streak system and receive increasingly personalized recommendations from our AI nutrition assistant, Nutri Mate!
