@@ -4,7 +4,8 @@
 
 ![Application Screenshot](https://github.com/SebastianBenjamin/DietPlanner/blob/main/src/main/screenshots/img.png?raw=true)
 
-### ![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github\&style=for-the-badge)
+### ![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github\&style=for-the-badge) 
+#### https://github.com/SebastianBenjamin/DietPlanner
 ### ![Stars](https://img.shields.io/github/stars/SebastianBenjamin/DietPlanner?style=for-the-badge) ![Forks](https://img.shields.io/github/forks/SebastianBenjamin/DietPlanner?style=for-the-badge) ![Issues](https://img.shields.io/github/issues/SebastianBenjamin/DietPlanner?style=for-the-badge)
 
 ## 📝 Table of Contents
