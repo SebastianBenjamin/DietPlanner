@@ -180,7 +180,7 @@
 <div class="container mx-auto">
     <div class="chat-container">
         <div class="chat-header">
-            <h4 class="mb-0">Diet Planner Assistant</h4>
+            <h4 class="mb-0">Nutri Mate</h4>
             <p class="mb-0 small">Ask me anything about nutrition and diet planning</p>
         </div>
 
@@ -192,9 +192,9 @@
                     <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px;">
                         <i class="fas fa-robot"></i>
                     </div>
-                    <strong>Assistant</strong>
+                    <strong>Nutri Mate</strong>
                 </div>
-                Hello! I'm your Diet Planner Assistant. How can I help you with your nutrition or diet plans today?
+                Hello! I'm Nutri Mate , your Diet Planner Assistant. How can I help you with your nutrition or diet plans today?
             </div>
         </div>
 
@@ -203,7 +203,7 @@
                 <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-2" style="width: 30px; height: 30px;">
                     <i class="fas fa-robot"></i>
                 </div>
-                Assistant is typing...
+                Nutri Mate is typing...
             </div>
         </div>
 
@@ -422,7 +422,7 @@
                     '<div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-2" style="width: 28px; height: 28px;">' +
                     '<i class="fas fa-robot"></i>' +
                     '</div>' +
-                    '<strong>Assistant</strong>' +
+                    '<strong>Nutri Mate</strong>' +
                     '</div>';
                 messageDiv.innerHTML = headerHTML + content;
             } else {
@@ -445,7 +445,7 @@
                     contextPath = '/' + pathParts[1];
                 }
 
-                const url = contextPath + '/chatbot';
+                const url =  '/chatbot';
                 console.log("Sending request to URL:", url);
 
                 const response = await fetch(url, {

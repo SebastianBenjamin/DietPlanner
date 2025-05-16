@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 08, 2025 at 11:47 AM
+-- Generation Time: May 16, 2025 at 01:21 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,6 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `diets` (
   `diet_id` int(11) NOT NULL,
+  `created_by` varchar(255) DEFAULT NULL,
   `diet_name` varchar(255) NOT NULL,
   `diet_preference` varchar(255) DEFAULT NULL,
   `diet_type` varchar(255) DEFAULT NULL,
@@ -41,12 +42,13 @@ CREATE TABLE `diets` (
 -- Dumping data for table `diets`
 --
 
-INSERT INTO `diets` (`diet_id`, `diet_name`, `diet_preference`, `diet_type`, `exercise`, `total_meals`, `water_intake`) VALUES
-(1, 'Keto Diet', 'Non-Veg', 'Low-Carb', b'1', 3, 8),
-(2, 'Vegan Diet', 'Veg', 'Plant-Based', b'0', 4, 10),
-(3, 'Paleo Diet', 'Non-Veg', 'Whole Food', b'1', 3, 9),
-(4, 'Mediterranean Diet', 'Veg', 'Balanced', b'1', 5, 12),
-(5, 'High-Protein Diet', 'Non-Veg', 'Weight-Loss', b'0', 4, 7);
+INSERT INTO `diets` (`diet_id`, `created_by`, `diet_name`, `diet_preference`, `diet_type`, `exercise`, `total_meals`, `water_intake`) VALUES
+(1, NULL, 'Keto Diet', 'Non-Veg', 'Low-Carb', b'1', 3, 8),
+(2, NULL, 'Vegan Diet', 'Veg', 'Plant-Based', b'0', 4, 10),
+(3, NULL, 'Paleo Diet', 'Non-Veg', 'Whole Food', b'1', 3, 9),
+(4, NULL, 'Mediterranean Diet', 'Veg', 'Balanced', b'1', 5, 12),
+(5, NULL, 'High-Protein Diet', 'Non-Veg', 'Weight-Loss', b'0', 4, 7),
+(6, '3', 'Ben\'s Diet', 'Vegetarian', 'Low Carb', b'1', 5, 10);
 
 -- --------------------------------------------------------
 
@@ -70,6 +72,14 @@ CREATE TABLE `logdata` (
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `logdata`
+--
+
+INSERT INTO `logdata` (`log_id`, `log_date`, `exercise`, `meal1`, `meal2`, `meal3`, `meal4`, `meal5`, `meal6`, `streak`, `water`, `diet_id`, `user_id`) VALUES
+(16, '2025-05-11', 0, 1, 1, 1, 1, 0, 0, 7, 7000, 5, 3),
+(17, '2025-05-14', 0, 1, 1, 1, 1, 0, 0, 8, 7000, 5, 3);
+
 -- --------------------------------------------------------
 
 --
@@ -90,15 +100,17 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `phone_number` varchar(255) DEFAULT NULL,
   `weight` double DEFAULT NULL,
-  `diet_id` int(11) DEFAULT NULL
+  `diet_id` int(11) DEFAULT NULL,
+  `last_streakUpdate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `current_streak`, `date_of_birth`, `dietary_preference`, `email`, `full_name`, `gender`, `height`, `log_date`, `log_id`, `password`, `phone_number`, `weight`, `diet_id`) VALUES
-(1, 0, '1990-01-01', 'Vegetarian', 'user@example.com', 'John Doe', 'Male', 175.5, NULL, NULL, 'securepassword123', '+1234567890', 70.5, 5);
+INSERT INTO `users` (`user_id`, `current_streak`, `date_of_birth`, `dietary_preference`, `email`, `full_name`, `gender`, `height`, `log_date`, `log_id`, `password`, `phone_number`, `weight`, `diet_id`, `last_streakUpdate`) VALUES
+(2, 0, '2004-03-16', 'Non Vegetarian', 'benjaminsebastian156@gmail.com', 'BENJAMIN SEBASTIAN', 'Male', 180, '2025-05-10', 4, '12345678', '09744087190', 45, 1, NULL),
+(3, 8, '2000-01-01', 'Non Vegetarian', 'user@user', 'user', 'Male', 181, '2025-05-14', 17, 'user', '12345678', 42, 6, '2025-05-14');
 
 --
 -- Indexes for dumped tables
@@ -141,13 +153,13 @@ ALTER TABLE `diets`
 -- AUTO_INCREMENT for table `logdata`
 --
 ALTER TABLE `logdata`
-  MODIFY `log_id` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `log_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables

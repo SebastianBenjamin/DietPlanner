@@ -1,119 +1,173 @@
-# 🥗 Hibernate Diet Planner – Project Documentation
 
-## 📘 Overview
+# Diet Planner - Personalized Nutrition Assistant 🥗
 
-This is a Hibernate-based **Diet Planner** web application designed to help users plan and track their diet and fitness goals. The application is responsive using **Tailwind CSS**, supports user login and registration, tracks food intake and exercises, and offers features like **PDF reports** and **email notifications**.
+![Diet Planner Logo](https://raw.githubusercontent.com/SebastianBenjamin/DietPlanner/main/src/main/webapp/WEB-INF/views/healthy-food.png)
+
+### ![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github\&style=for-the-badge) 
+
+### ![Stars](https://img.shields.io/github/stars/SebastianBenjamin/DietPlanner?style=for-the-badge) ![Forks](https://img.shields.io/github/forks/SebastianBenjamin/DietPlanner?style=for-the-badge) ![Issues](https://img.shields.io/github/issues/SebastianBenjamin/DietPlanner?style=for-the-badge) 
+
+## 📝 Table of Contents
+- [About](#-about)
+- [Key Features](#-key-features)
+- [Technology Stack](#-technology-stack)
+- [System Requirements](#-system-requirements)
+- [Installation Guide](#-installation-guide)
+- [Database Configuration](#-database-configuration)
+- [Application Deployment](#-application-deployment)
+- [Project Architecture](#-project-architecture)
+- [Development Team](#-development-team)
+- [License](#-license)
+
+## 🌟 About
+
+Diet Planner is a **Spring-Hibernate** based web application that revolutionizes personal nutrition management. This comprehensive solution combines intelligent diet planning with habit tracking and AI-powered guidance to help users achieve their health goals.
+
+**Core Value Proposition:**
+- 🎯 Personalized nutrition planning tailored to individual needs
+- 📈 Comprehensive progress tracking with actionable insights
+- 🤖 Intelligent AI assistant for real-time nutrition guidance
+- 📱 Responsive design for seamless cross-device experience
+
+## ✨ Key Features
+
+### 🍽️ Diet Planning Module
+| Feature | Description |
+|---------|-------------|
+| Custom Diet Creation | Build personalized plans with custom meal frequencies and preferences |
+| Predefined Templates | Choose from professionally designed diet templates |
+| Nutritional Targets | Set daily calorie, protein, and water intake goals |
+
+### 📊 Health Tracking System
+| Component | Capabilities |
+|-----------|--------------|
+| Meal Logger | Track meal completion status with visual indicators |
+| Water Tracker | Monitor daily hydration with goal progress |
+| Exercise Log | Record workout sessions and intensity levels |
+| Streak System | Motivation through achievement streaks and milestones |
+
+### 🤖 AI Nutrition Assistant
+- Natural language processing for nutrition queries
+- Context-aware recommendations
+- Quick-access templates for common questions
+- Personalized feedback based on user data
+
+### 🎨 User Experience
+- Modern dashboard with at-a-glance metrics
+- Intuitive navigation and workflow
+- Responsive design optimized for all devices
+- Visual data representations for easy interpretation
+
+## 💻 Technology Stack
+
+### Backend Infrastructure
+![Java](https://img.shields.io/badge/Java-17-007396?logo=java)
+![Spring](https://img.shields.io/badge/Spring-5.3.20-6DB33F?logo=spring)
+![Hibernate](https://img.shields.io/badge/Hibernate-5.6.14-59666C?logo=hibernate)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql)
+
+### Frontend Ecosystem
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.2-06B6D4?logo=tailwind-css)
+![JSP](https://img.shields.io/badge/JSP-2.3-F37626?logo=java)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?logo=javascript)
+
+### Development Tools
+![Apache Tomcat](https://img.shields.io/badge/Apache_Tomcat-10.0.27-F8DC75?logo=apache-tomcat)
+![Maven](https://img.shields.io/badge/Maven-3.8.6-C71A36?logo=apache-maven)
+
+## ⚙️ System Requirements
+
+**Minimum Specifications:**
+- Java Development Kit 17+
+- Apache Tomcat 10.x
+- MySQL Server 8.0+ or XAMPP
+- Maven 3.8+
+- Modern web browser (Chrome, Firefox, Edge)
+
+## 🛠️ Installation Guide
+
+1. **Clone the Repository**
+   ```bash
+   git clone https://github.com/SebastianBenjamin/DietPlanner.git
+   cd DietPlanner
+   ```
+
+2. **Configure Application Properties**
+  - Update database connection parameters in:
+    ```
+    src/main/resources/hibernate.cfg.xml
+    ```
+
+3. **Build Dependencies**
+   ```bash
+   mvn clean install
+   ```
+
+## 🗃️ Database Configuration
+
+1. **Initialize MySQL Database**
+   ```sql
+   CREATE DATABASE dietplanner ;
+   ```
+
+2. **Import Schema**
+   ```bash
+   mysql -u [username] -p dietplanner < dietplanner.sql
+   ```
+
+## 🚀 Application Deployment
+
+**Tomcat Deployment Steps:**
+1. Build the WAR package:
+   ```bash
+   mvn clean package
+   ```
+
+2. Deploy to Tomcat:
+  - Copy `target/DietPlanner.war` to `[TOMCAT_HOME]/webapps/`
+  - Start Tomcat server
+
+3. Access application:
+   ```
+   http://localhost:8080/DietPlanner/
+   ```
+
+## 🏗️ Project Architecture
+
+```
+DietPlanner/
+├── src/
+│   ├── main/
+│   │   ├── java/org/                      
+│   │   │   ├── classFiles/             # Domain models and business logic
+│   │   │   │   ├── User.java          # User entity
+│   │   │   │   ├── Diet.java          # Diet plan entity
+│   │   │   │   ├── LogData.java       # Log data Entity
+│   │   │   │   └── Services.java      # Core business services
+│   │   │   └── Controllers/           # MVC controllers
+│   │   │       └── Controller.java    # Main application controller
+│   │   ├── resources/                 
+│   │   │   └── hibernate.cfg.xml      # ORM configuration
+│   │   └── webapp/                    
+│   │       ├── WEB-INF/views/         # View templates (JSP)
+│   │       └── static/                # Static assets (CSS/JS/images)
+├── pom.xml                            # Build configuration
+└── dietplanner.sql                    # Database schema
+```
+
+## 👨‍💻 Development Team
+
+### Core Contributors
+
+| Name | GitHub | Contributions |
+|------|--------|---------------|
+| Akshay Venugopalan | [@akshayvenu](https://github.com/akshayvenu) | Logging systems, AI chatbot integration |
+| Benjamin Sebastian | [@SebastianBenjamin](https://github.com/SebastianBenjamin) | Dashboard UI, diet management, streak logic |
+| Shravya Salian | [@salianShravya](https://github.com/salianShravya) | Authentication system, UI components |
+
 
 ---
 
-## 🗂️ Pages and Features
+💡 **Pro Tip:** For optimal results, use the application consistently to benefit from the streak system and receive increasingly personalized recommendations from our AI nutrition assistant, Nutri Mate!
 
-### 1. 🏠 Home Page (`index.jsp`)
-- Landing page introducing the app.
-- Brief description of benefits and features.
-- Navigation links: Register, Login, About.
-
----
-
-### 2. 📝 Register Page (`register.jsp`)
-- User registration form with the following fields:
-  - Name
-  - Email
-  - Password
-  - Age
-  - Gender
-  - Weight
-  - Height
-  - Activity Level (Sedentary, Lightly Active, etc.)
-  - Health Goal (Weight Loss, Maintenance, Weight Gain)
-- Validates inputs before submission.
-- Saves data using Hibernate ORM into `User` entity.
-
----
-
-### 3. 🔐 Login Page (`login.jsp`)
-- Login using:
-  - Email / Username
-  - Password
-- Session management.
-- Redirects to Dashboard on successful login.
-
----
-
-### 4. 📊 Dashboard (`dashboard.jsp`)
-Displays all user-specific information:
-
-#### a. Current Diet Plan
-- Displays today's diet schedule.
-- Breakdown by meal: Breakfast, Lunch, Dinner, Snacks.
-
-#### b. 🥘 Recipe of the Day
-- Pulled from static/dummy JSON.
-- Displays image, ingredients, and cooking instructions.
-
-#### c. ✏️ Edit Profile
-- Update weight, height, activity level, and goal.
-
-#### d. 🔍 Search Recipes
-- Search bar to find recipes from a local dummy JSON.
-- Filters by calorie, meal type, or ingredient.
-
-#### e. 🔁 Diet Streak & Goal Progress
-- Number of days diet was followed successfully.
-- Percentage progress toward target weight/goal.
-
-#### f. ➕ Log Food & Exercise
-- Log food items consumed (name, quantity, calories).
-- Log exercise (type, duration, estimated calories burned).
-
----
-
-### 5. 📤 Export & Notifications
-- 📧 **Email Notifications**
-  - Daily reminders
-  - Weekly progress reports
-
-- 📄 **Export to PDF**
-  - Food intake and exercise log
-  - Diet plan summary
-
----
-
-### 6. 👨‍💼 Admin Page (`admin.jsp`)
-- View all users.
-- Add/modify/delete diet plans.
-- Monitor overall app usage.
-- Export user data to PDF.
-
----
-
-## 🧪 Testing Plan
-
-### ✅ Input Validation
-- Check valid email format.
-- Password length and strength.
-- Prevent duplicate emails/usernames.
-
-### ✅ Functional Tests
-- Register new user
-- Login with valid and invalid credentials
-- Update profile
-- View diet plan and recipe
-- Export to PDF
-- Receive email notifications
-
-### ✅ UI/UX Testing
-- Responsive layout on desktop/tablet/mobile
-- All buttons, links, and forms behave as expected
-
----
-
-## 🎁 Extra Suggestions
-
-- 🌙 **Dark Mode Toggle**
-- 📅 **Calendar View** of logs and progress
-- 📌 Bookmark favorite recipes
-- 🧠 AI-based diet suggestion (future integration)
-
-
-
+![Application Screenshot](https://raw.githubusercontent.com/SebastianBenjamin/DietPlanner/main/screenshots/img)

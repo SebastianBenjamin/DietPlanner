@@ -1,6 +1,8 @@
 package org.controllers;
 
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.classFiles.Diet;
 import org.classFiles.Services;
@@ -12,11 +14,14 @@ import org.hibernate.cfg.Configuration;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -492,24 +497,49 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
 
     @PostMapping("/chatbot")
     @ResponseBody
-    public Map<String, String> chatbotResponse(@RequestBody Map<String, String> payload) {
+    public Map<String, String> chatbotResponse(@RequestBody Map<String, String> payload,HttpSession session) {
         logger.info("Received chat request: {}", payload);
         String message = payload.get("message");
         Map<String, String> response = new HashMap<>();
 
         try {
-            String apiKey = "AIzaSyAVyDNJPcO107Tm4ddMCERLiqMvwZh87po";
+            String apiKey = "AIzaSyCf8f0qtkdgxztVi_WwnkKnHHUxiudpk68";
+            User userDetails = (session.getAttribute("user") != null) ? (User) session.getAttribute("user") : null;
+            String userInfo = (userDetails != null)
+                    ? String.format(
+                    "User Details: [Name: %s, Email: %s, Phone: %s, Gender: %s, Date of Birth: %s, Height: %.2f, Weight: %.2f, Dietary Preference: %s, Current Streak: %d, Last Streak Update: %s, Log Date: %s]",
+                    userDetails.getFullName(),
+                    userDetails.getEmail(),
+                    userDetails.getPhoneNumber() != null ? userDetails.getPhoneNumber() : "Not provided",
+                    userDetails.getGender(),
+                    userDetails.getDateOfBirth() != null ? userDetails.getDateOfBirth().toString() : "Not provided",
+                    userDetails.getHeight() != null ? userDetails.getHeight() : 0.0,
+                    userDetails.getWeight() != null ? userDetails.getWeight() : 0.0,
+                    userDetails.getDietaryPreference(),
+                    userDetails.getCurrentStreak(),
+                    userDetails.getLastStreakUpdate() != null ? userDetails.getLastStreakUpdate().toString() : "Not provided",
+                    userDetails.getLogDate() != null ? userDetails.getLogDate().toString() : "Not provided"
+            )
+                    : "User details not available";
+
+
+
 
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=" + apiKey))
+                    .uri(URI.create("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + apiKey))
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString("""
                 {
                     "contents": [
                         {
                             "role": "user",
-                            "parts": [{"text": "You are a professional nutritionist and diet planner. Answer the following question concisely: %s"}]
+                            "parts": [
+                            {"text": "You are a professional nutritionist and diet planner. Answer the following question concisely: %s 
+                            . also if asked to give  a diet give in format like:
+                            diet name,total meals per day (max 6),diet type(balanced,low carb,low fat,high protein,
+                            vegetarian),daily water intake(max 20l),dietary preference(vegetarian,non vegetarian),exercise(yes or no).User details: %s"}
+                            ]
                         }
                     ],
                     "generationConfig": {
@@ -517,7 +547,7 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
                         "maxOutputTokens": 800
                     }
                 }
-                """.formatted(message)))
+                """.formatted(message, userInfo)))
                     .build();
 
             HttpResponse<String> apiResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -566,5 +596,24 @@ public String changePassword(Model model, HttpSession session,HttpServletRequest
     @GetMapping("/chat")
     public String chatPage() {
         return "chat";
+    }
+    @GetMapping("/favicon.ico")
+    public void favicon(HttpServletResponse response) throws IOException {
+        // Load favicon from resources folder (classpath)
+        Resource resource = new ClassPathResource("/static/favicon.ico");
+
+        if (resource.exists()) {
+            response.setContentType("image/x-icon");
+            // Set caching headers if you want (optional)
+            response.setHeader("Cache-Control", "max-age=86400");
+
+            try (ServletOutputStream out = response.getOutputStream()) {
+                // Copy the file content to response output stream
+                resource.getInputStream().transferTo(out);
+                out.flush();
+            }
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        }
     }
 }

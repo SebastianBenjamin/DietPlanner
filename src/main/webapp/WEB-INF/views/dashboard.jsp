@@ -11,7 +11,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diet Planner - Dashboard</title>
-    <link rel="icon" type="image/ico" href="healthy-food.png">
+    <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/static/healthy-food.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -229,7 +229,7 @@
     };
 </script>
 <!-- Floating Chat Button -->
-<div class="fixed bottom-6 right-6 z-50">
+<div class="fixed bottom-10 right-9 z-50">
     <a href="chat" class="flex items-center justify-center h-14 w-14 rounded-full bg-gray-900 text-white shadow-lg hover:bg-gray-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500" title="Chat with Nutri Mate">
         <i class="fas fa-user-tie text-2xl"></i>
     </a>
