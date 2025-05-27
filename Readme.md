@@ -19,12 +19,8 @@
 - [Database Configuration](#-database-configuration)
 - [Application Deployment](#-application-deployment)
 - [Project Architecture](#-project-architecture)
-<<<<<<< HEAD
 - [App Navigation Guide](#-app-navigation-guide)
 
-
-=======
->>>>>>> d3465ebd9eb85c31b705fb316532be3c17038c89
 
 ## 🌟 About
 
@@ -38,11 +34,6 @@ Diet Planner is a **Spring-Hibernate** based web application that revolutionizes
 - 📱 Responsive design for seamless cross-device experience
 
 ## 👨‍💻 Development Team
-<<<<<<< HEAD
-
-=======
->>>>>>> d3465ebd9eb85c31b705fb316532be3c17038c89
-### Core Contributors
 
 | Name | GitHub | Contributions |
 |------|--------|---------------|
@@ -50,13 +41,8 @@ Diet Planner is a **Spring-Hibernate** based web application that revolutionizes
 | Benjamin Sebastian | [@SebastianBenjamin](https://github.com/SebastianBenjamin) | Dashboard UI, diet management, streak logic |
 | Shravya Salian | [@salianShravya](https://github.com/salianShravya) | Authentication system, UI components |
 
-<<<<<<< HEAD
 
 ## ✨ Key Features
-=======
-## ✨ Key Features  
->>>>>>> d3465ebd9eb85c31b705fb316532be3c17038c89
-
 ### 🍽️ Diet Planning Module
 
 | Feature | Description |
@@ -192,7 +178,7 @@ DietPlanner/
 ```
 ## 🌐 App Navigation Guide
 
-<<<<<<< HEAD
+
 The Diet Planner application includes several key pages with interactive UI elements that trigger specific endpoints. Below is a comprehensive navigation map showing both pages and their associated actions:
 
 | Page | UI Element/Action                 | Triggered Endpoint | Description |
@@ -220,9 +206,8 @@ The Diet Planner application includes several key pages with interactive UI elem
 | **User Management** | "Profile" icon                    | `/profile` | View user profile information |
 | | "Logout" button                   | `/logout` | End user session |
 ### 🔄 Navigation Flow Summary
-![img_1.png](img_1.png)
-=======
->>>>>>> d3465ebd9eb85c31b705fb316532be3c17038c89
+![architecture.png](https://github.com/SebastianBenjamin/DietPlanner/blob/main/src/main/screenshots/architecture.png?raw=true)
+
 ---
   
 💡 **Pro Tip:** For optimal results, use the application consistently to benefit from the streak system and receive increasingly personalized recommendations from our AI nutrition assistant, Nutri Mate!
