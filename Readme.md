@@ -2,7 +2,7 @@
 # Diet Planner - Personalized Nutrition App 🥗
 
 
-![Application Screenshot](https://github.com/SebastianBenjamin/DietPlanner/blob/main/src/main/screenshots/img.png?raw=true)
+![Application Screenshot](https://raw.githubusercontent.com/SebastianBenjamin/DietPlanner/refs/heads/main/src/main/screenshots/Diet%20Planner.gif)
 
 ### ![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?logo=github\&style=for-the-badge) 
 #### https://github.com/SebastianBenjamin/DietPlanner
