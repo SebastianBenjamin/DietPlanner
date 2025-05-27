@@ -188,7 +188,10 @@
 
     async function displayDailySalad() {
         try {
-            const response = await fetch('https://mocki.io/v1/37f08d62-c762-47d3-893e-0f6a015a7bf4');
+            const response = await fetch('https://raw.githubusercontent.com/SebastianBenjamin/DietPlanner/main/api-recipeoftheday.json');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
             const data = await response.json();
 
             if (data.salads && data.salads.length > 0) {
@@ -209,6 +212,7 @@
                 return salad;
             } else {
                 console.error('No salads found in the data');
+                document.getElementById('error-message').textContent = 'No recipes available.';
                 return null;
             }
         } catch (error) {
