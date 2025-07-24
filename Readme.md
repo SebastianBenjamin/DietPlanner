@@ -1,5 +1,5 @@
 
-# Diet Planner - Personalized Nutrition App 🥗
+# Stick2Diet - Personalized Nutrition App 🥗
 
 
 ![Application Screenshot](https://raw.githubusercontent.com/SebastianBenjamin/DietPlanner/refs/heads/main/src/main/screenshots/Diet%20Planner.gif)
